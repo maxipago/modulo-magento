@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <MaxiPago_CheckoutApi>
+            <version>1.0.5</version>
+        </MaxiPago_CheckoutApi>
+    </modules>
+    
+    <global>
+        <models>
+            <checkoutapi>
+                <class>MaxiPago_CheckoutApi_Model</class>
+                <resourceModel>checkoutapi_mysql4</resourceModel>
+            </checkoutapi>
+            <checkoutapi_mysql4>
+                <class>MaxiPago_CheckoutApi_Model_Mysql4</class>
+                <entities>
+                    <api_debug>
+                        <table>checkoutapi_api_debug</table>
+                    </api_debug>
+                </entities>
+            </checkoutapi_mysql4>
+            <!-- <sales>
+                <rewrite>
+                    <order>MaxiPago_CheckoutApi_Model_Order</order>
+                </rewrite>
+            </sales> -->
+        </models>
+        <resources>
+            <checkoutapi_setup>
+                <setup>
+                    <module>MaxiPago_CheckoutApi</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </checkoutapi_setup>
+            <checkoutapi_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </checkoutapi_write>
+            <checkoutapi_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </checkoutapi_read>
+        </resources>
+		<blocks>
+            <checkoutapi>
+                <class>MaxiPago_CheckoutApi_Block</class>
+            </checkoutapi>
+            <adminhtml>
+                <rewrite>
+                    <sales_order_view>MaxiPago_CheckoutApi_Block_Adminhtml_Sales_Order_View</sales_order_view>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+		<helpers>
+            <checkoutapi>
+                <class>MaxiPago_CheckoutApi_Helper</class>
+            </checkoutapi>
+		</helpers>
+        <events>
+			<sales_order_payment_cancel>
+				<observers>
+					<checkoutapi_maxipago_before_cancellation>
+						<type>singleton</type>
+						<class>checkoutapi/observer</class>
+						<method>salesOrderBeforeCancellation</method>
+					</checkoutapi_maxipago_before_cancellation>
+				</observers>
+			</sales_order_payment_cancel>
+			<sales_order_payment_place_end>
+				<observers>
+					<checkoutapi_maxipago_payment_place_end>
+						<type>singleton</type>
+						<class>checkoutapi/observer</class>
+						<method>salesOrderPaymentPlaceEnd</method>
+					</checkoutapi_maxipago_payment_place_end>
+				</observers>
+			</sales_order_payment_place_end>
+			<sales_order_place_after>
+        		<observers>
+        			<checkoutapi_maxipago_order_place_after>
+        				<class>checkoutapi/observer</class>
+        				<method>salesOrderPlaceAfter</method>
+        			</checkoutapi_maxipago_order_place_after>
+        		</observers>
+        	</sales_order_place_after>
+        </events>
+        <fieldsets>
+             <sales_convert_quote_payment>
+                <maxipago_transaction_id>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_transaction_id>
+                <maxipago_split_number>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_split_number>
+                <maxipago_split_value>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_split_value>
+                <maxipago_token_transaction>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_token_transaction>
+                <maxipago_url_payment>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_url_payment>
+                <maxipago_typeful_line>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_typeful_line>
+                <maxipago_fraud_score>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_fraud_score>
+                <maxipago_cc_token>
+                    <to_order_payment>*</to_order_payment>
+                </maxipago_cc_token>
+             </sales_convert_quote_payment>
+        </fieldsets>
+    </global>
+    
+    <crontab>
+        <jobs>
+            <MaxiPago_CheckoutApi>
+                <schedule>
+                    <cron_expr>59 23 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>checkoutapi/observer::updateObOrdersMP</model>
+                </run>
+            </MaxiPago_CheckoutApi>
+        </jobs>
+    </crontab>
+    
+    <frontend>
+        <secure_url>
+            <checkoutapi>/checkoutapi/standard</checkoutapi>
+        </secure_url>   
+        <routers>
+            <checkoutapi>
+                <use>standard</use>
+                <args>
+                    <module>MaxiPago_CheckoutApi</module>
+                    <frontName>checkoutapi</frontName>
+                </args>
+            </checkoutapi>
+        </routers>
+        <translate>
+            <modules>
+                <checkoutapi>
+                    <files>
+                        <default>MaxiPago_CheckoutApi.csv</default>
+                    </files>
+                </checkoutapi>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <maxipagocheckoutapi>
+                    <file>maxipago_checkoutapi.xml</file>
+                </maxipagocheckoutapi>
+            </updates>
+        </layout>
+    </frontend>
+    
+    <adminhtml>
+        <translate>
+            <modules>
+                <checkoutapi>
+                    <files>
+                        <default>MaxiPago_CheckoutApi.csv</default>
+                    </files>
+                </checkoutapi>
+            </modules>
+        </translate>        
+        <layout>
+            <updates>
+                <maxipagocheckoutapi>
+                    <file>maxipago_checkoutapi.xml</file>
+                </maxipagocheckoutapi>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <default>
+        <payment>
+            <maxipagocheckoutapi_creditcard>
+                  <active>1</active>
+                  <model>MaxiPago_CheckoutApi_Model_Creditcard</model>
+                  <order_status>pending</order_status>
+                  <title>Cartao de Credito</title>
+            </maxipagocheckoutapi_creditcard>
+            <maxipagocheckoutapi_bankslip>
+                  <active>1</active>
+                  <model>MaxiPago_CheckoutApi_Model_Bankslip</model>
+                  <order_status>pending</order_status>
+                  <title>Boleto Bancario</title>
+            </maxipagocheckoutapi_bankslip>
+            <maxipagocheckoutapi_tef>
+                  <active>1</active>
+                  <model>MaxiPago_CheckoutApi_Model_Tef</model>
+                  <order_status>pending</order_status>
+                  <title>Transferecia Online</title>
+            </maxipagocheckoutapi_tef>
+            <!-- <maxipagocheckoutapi_redepay>
+                  <active>1</active>
+                  <model>MaxiPago_CheckoutApi_Model_Redepay</model>
+                  <order_status>pending</order_status>
+                  <title>Rede Pay</title>
+            </maxipagocheckoutapi_redepay> -->
+        </payment>
+    </default>
+</config>

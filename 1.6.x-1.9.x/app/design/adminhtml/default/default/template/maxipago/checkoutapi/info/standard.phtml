@@ -1,0 +1,37 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>       
+<p>
+    <strong>
+        <?php echo $this->htmlEscape($this->getMethod()->getTitle()); ?>
+    </strong>
+    <br/> 
+    <?php 
+        if($this->getInfo()->getData("cc_type") != NULL){
+            $tcTxtPaymentMethod = array("Diners Club","Visa","Mastercard","American Express","Elo","Discovery","Transferência Online - Bradesco","Transferência Online - Itaú","Boleto Bancário - Itaú","Boleto Bancário - Bradesco","Boleto Bancário - Banco do Brasil","Boleto Bancário - HSBC","Boleto Bancário - Santander","Boleto Bancário - Caixa Econômica Federal");
+            $tcIdPaymentMethod = array("DC","VI","MC","AM","ELO","DI","17","18","11","12","13","14","15","16");
+            $tcIdPaymentMethodCreditCard = array("","2","3","4","5","15","16","18","19");
+
+            echo $tcTxtPaymentMethod[array_search($this->getInfo()->getData("cc_type"), $tcIdPaymentMethod)];
+        } 
+    ?>
+    <br/> Nome no Cart&atilde;o: <?php echo $this->getInfo()->getCcOwner();?>
+    <br/> &Uacute;ltimos 4 D&iacute;gitos do Cart&atilde;o: <?php echo $this->getInfo()->getCcLast4();?>
+    <br/> Pontua&ccedil;&atilde;o Antifraude: <?php echo $this->getInfo()->getMaxipagoFraudScore();?>
+</p>

@@ -1,0 +1,47 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+    //$this->getPayment(); 
+
+if($this->getRequest()->getParam("type") == 'creditcard'){
+    $_standardPayment = Mage::getSingleton('checkoutapi/'.$this->getRequest()->getParam("type"));
+    $_processorType = $_standardPayment->getConfigData('processorType');
+    $_fraudCheck = $_standardPayment->getConfigData('fraudCheck') ? 'Y' : 'N';
+    if($processorType != 'sale' && $_fraudCheck == 'Y'){
+//         $_sellerId = $_standardPayment->getConfigData("sellerId");
+    	$_sellerId = Mage::helper('checkoutapi')->getGlobalConfig('sellerId');
+//         $_secretKey = $_standardPayment->getConfigData("secretKey");
+    	$_secretKey = Mage::helper('checkoutapi')->getGlobalConfig('secretKey');
+        $_prefixo = $_standardPayment->getConfigData("prefixo");
+        $_orderId = $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+
+        $_hash = hash_hmac('md5', $_sellerId.'*'.$_prefixo.$_orderId, $_secretKey);
+
+//         if ($_standardPayment->getConfigData("sandbox") == '1'){
+        if (Mage::helper('checkoutapi')->getGlobalConfig('sandbox') == '1'){
+            $_urlFrame = 'https://testauthentication.maxipago.net/redirection_service/logo';
+        }else {
+            $_urlFrame = 'https://authentication.maxipago.net/redirection_service/logo';
+        }
+?>
+<!--iframe width="0" height="0" frameborder=" 0" src="<?php echo $_urlFrame;?>?m=<?php echo $_sellerId;?>&s=<?php echo $_prefixo.$_orderId;?>&h=<?php echo $_hash;?>" style="display:none;"></iframe-->
+<?php
+    }
+}
+?>

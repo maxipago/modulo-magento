@@ -1,0 +1,80 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?php
+    $this->getPayment(); 
+    $title = "";
+    $descriptionPaymentTC = "";
+
+    switch (intval($this->getStatusId())){
+        case 0:
+                $title = "Sua compra foi finalizada com ".$this->getPaymentTitle();
+                $descriptionPaymentTC = "Sua compra foi finalizada com sucesso através do ".$this->getPaymentTitle();
+            break;
+        case 1:
+        case 2:
+        case 1022:
+        case 1024:
+        case 1025:
+        case 2048:
+        case 4097:
+                $title = "Ocorreu um problema ao finalizar a compra pelo ".$this->getPaymentTitle();
+                $descriptionPaymentTC = "Ocorreu um problema ao finalizar a compra através do ".$this->getPaymentTitle();
+            break;
+        default:
+                $title = "Sua compra foi finalizada com ".$this->getPaymentTitle();
+                $descriptionPaymentTC = "Sua compra foi finalizada com sucesso.<br/>Estamos aguardando a confirmação do pagamento.";
+            break;
+    }
+?>
+
+<div class="page-title">
+	<h1><?php echo $title;?></h1>
+</div>
+<p><?php echo $descriptionPaymentTC;?></p><br/>
+<div>
+	<strong>Dados do Pedido:</strong><br/>
+                    Seu n&uacute;mero de pedido &eacute;: <strong><?php echo $this->getOrderNumber()?></strong><br />
+                    N&uacute;mero da transa&ccedil;&atilde;o no <?php ?>: <strong><?php echo $this->getTransactionId()?></strong><br />
+                    Meio de Pagamento: <strong><?php echo $this->getPaymentMethodName()?></strong><br />
+                    Situa&ccedil;&atilde;o da transa&ccedil;&atilde;o no <?php echo $this->getPaymentTitle(); ?>: <strong><?php echo $this->getStatusName()?></strong><br /><br />
+</div>
+<div class="buttons-set">
+	<?php
+   		switch ($this->getPaymentMethodId()) {
+        	case 'BL':
+    ?>
+    	<button type="button" class="button btn-continue" title="Imprimir Boleto" onclick="window.open('<?php echo $this->getUrlPayment()?>');">
+    		<span><span>Imprimir Boleto</span></span>
+    	</button>
+	<?php
+			break;
+			case 'TEF':
+	?>
+		<button type="button" class="button btn-continue"  title="Efetuar Transfer&ecirc;ncia Online" onclick="window.open('<?php echo $this->getUrlPayment()?>');">
+			<span><span>Efetuar Transfer&ecirc;ncia Online</span></span>
+		</button>
+	<?php
+			break;
+		}
+	?>
+	<button type="button" class="button btn-continue" title="Continuar Comprando" onclick="window.location='<?php echo $this->getUrl() ?>';">
+		<span><span>Continuar Comprando</span></span>
+	</button>
+</div>

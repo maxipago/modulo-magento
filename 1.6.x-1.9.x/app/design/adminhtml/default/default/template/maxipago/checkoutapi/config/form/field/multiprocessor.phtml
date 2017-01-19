@@ -1,0 +1,311 @@
+<?php
+
+$_htmlId = $this->getHtmlId() ? $this->getHtmlId() : '_' . uniqid();
+
+$_colspan = 2;
+if (!$this->_addAfter) {
+	$_colspan -= 1;
+}
+$_colspan = $_colspan > 1 ? 'colspan="' . $_colspan . '"' : '';
+
+$_ccTypes = $this->getCcTypes();
+$_processors = $this->getProcessors();
+$_ccTypeProcessors = $this->getCcTypeProcessors();
+?>
+
+<div class="grid" id="grid<?php echo $_htmlId ?>">
+    <table id="table<?php echo $_htmlId ?>" cellpadding="0" cellspacing="0" class="border">
+        <tbody>
+
+            <tr class="headings" id="headings<?php echo $_htmlId ?>">
+<?php foreach ($this->_columns as $columnName => $column):?>
+                <th><?php echo $column['label'] ?></th>
+<?php endforeach;?>
+                <th <?php echo $_colspan?>></th>
+            </tr>
+
+            <tr id="addRow<?php echo $_htmlId ?>">
+                <td colspan="<?php echo count($this->_columns) ?>"></td>
+                <td <?php echo $_colspan?>>
+                    <button style="" onclick="" class="scalable add" type="button" id="addToEndBtn<?php echo $_htmlId ?>">
+                        <span><span><span><?php echo $this->_addButtonLabel ?></span></span></span>
+                    </button>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <input type="hidden" name="<?php echo $this->getElement()->getName() ?>[__empty]" value="" />
+</div>
+<div id="empty<?php echo $_htmlId ?>">
+    <button style="" onclick="" class="scalable add" type="button" id="emptyAddBtn<?php echo $_htmlId ?>">
+        <span><span><span><?php echo $this->_addButtonLabel ?></span></span></span>
+    </button>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+        
+var ccTypes = <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_ccTypes)) ?>;
+var processors = <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_processors)) ?>;
+var ccTypeProcessors = <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_ccTypeProcessors)) ?>;
+var selectedCcTypes = [];
+var selectedProcessors = [];
+var ccTypeIds = [];
+
+for(var i = 0; i < ccTypes.length; i++) {
+	ccTypeIds.push(ccTypes[i].value);
+}
+
+// console.log(ccTypes);
+// console.log(processors);
+// console.log(ccTypeProcessors);
+           
+// create row creator
+var arrayRow<?php echo $_htmlId ?> = {
+    // define row prototypeJS template
+    template : new Template(
+        '<tr id="#{_id}" class="row">'
+<?php foreach ($this->_columns as $columnName => $column):?>
+            +'<td class="<?php echo $columnName ?>">'
+                +'<?php echo Mage::helper('core')->jsQuoteEscape($this->_renderCellTemplate($columnName)) ?>'
+            +'<\/td>'
+<?php endforeach;?>
+<?php if ($this->_addAfter):?>
+            +'<td><button onclick="" class="scalable add" type="button" id="addAfterBtn#{_id}"><span><span><span><?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('adminhtml')->__('Add after')) ?><\/span><\/span><\/span><\/button><\/td>'
+<?php endif;?>
+            +'<td><button onclick="arrayRow<?php echo $_htmlId ?>.del(\'#{_id}\')" class="scalable delete" type="button"><span><span><span><?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('adminhtml')->__('Delete')) ?><\/span><\/span><\/span><\/button><\/td>'
+        +'<\/tr>'
+    ),
+
+    rowsCount : 0,
+
+    selects : [],
+
+    ccTypes : <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_ccTypes)) ?>,
+
+    ccTypeProcessors : <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_ccTypeProcessors)) ?>,
+
+    selectedCcTypes : [],
+
+    addTemplate : function(templateData, insertAfterId)
+    {
+    	// generate default template data
+        if ('' == templateData) {
+            var d = new Date();
+            var templateData = {
+<?php foreach ($this->_columns as $columnName => $column):?>
+                <?php echo $columnName ?> : '',
+<?php endforeach;?>
+                _id : '_' + d.getTime() + '_' + d.getMilliseconds()
+            };
+        }
+
+        // insert before last row
+        if ('' == insertAfterId) {
+            Element.insert($('addRow<?php echo $_htmlId ?>'), {before: this.template.evaluate(templateData)});
+        }
+        // insert after specified row
+        else {
+            Element.insert($(insertAfterId), {after: this.template.evaluate(templateData)});
+        }
+
+<?php if ($this->_addAfter):?>
+        Event.observe('addAfterBtn' + templateData._id, 'click', this.add.bind(this, '', templateData._id));
+<?php endif;?>
+
+        this.rowsCount += 1;
+
+        return templateData._id;
+    },
+
+    add : function(templateData, insertAfterId)
+    {        
+    	this.addTemplate(templateData, insertAfterId);
+
+        this.updateSelects();
+        this.updateSelectedCcTypes(this.selectedCcTypes.length - 1);
+            
+        var newSelectCcType = this.selects[this.selects.length - 1];
+        var value = newSelectCcType.value;      
+        this.reloadCcType(newSelectCcType);
+        newSelectCcType.value = value;
+        this.reloadProcessor(newSelectCcType);
+        this.selectedCcTypes.push(newSelectCcType.value);
+
+        for (var i = 0; i < this.selects.length - 1; i++) {
+        	this.removeCcType(this.selects[i], newSelectCcType.value);
+        }
+
+		var self = this;
+        newSelectCcType.observe('change', function() {
+        	self.reloadProcessor(newSelectCcType);
+        });
+
+        this.toggleAddToEndBtn();
+
+    },
+
+    addNew: function(templateData, insertAfterId)
+    {
+        this.addTemplate(templateData, insertAfterId);
+        
+        this.updateSelects();
+        this.updateSelectedCcTypes(this.selectedCcTypes.length - 1);
+        
+        var newSelectCcType = this.selects[this.selects.length - 1];
+        this.reloadCcType(newSelectCcType);
+        this.reloadProcessor(newSelectCcType);
+        this.selectedCcTypes.push(newSelectCcType.value);
+
+        for (var i = 0; i < this.selects.length - 1; i++) {
+        	this.removeCcType(this.selects[i], newSelectCcType.value);
+        }
+
+        var self = this;
+        newSelectCcType.observe('change', function() {
+        	self.reloadProcessor(newSelectCcType);
+        });
+
+        this.toggleAddToEndBtn();
+    },
+
+    del : function(rowId)
+    {
+        $(rowId).remove();
+        this.rowsCount -= 1;
+        if (0 == this.rowsCount) {
+            this.showButtonOnly();
+        }
+
+        this.updateSelects();
+        this.updateSelectedCcTypes();
+        
+        for (var i = 0; i < this.selects.length; i++) {
+            this.reloadCcType(this.selects[i], true);
+            this.selects[i].value = this.selectedCcTypes[i];
+        }
+
+        this.toggleAddToEndBtn();
+    },
+
+    showButtonOnly : function()
+    {
+        $('grid<?php echo $_htmlId ?>').hide();
+        $('empty<?php echo $_htmlId ?>').show();
+    },
+
+    updateSelects : function ()
+    {
+    	this.selects = $$('#table<?php echo $_htmlId ?> td.cc_type select');
+    },
+
+    updateSelectedCcTypes : function (endIndex = null) {
+    	this.selectedCcTypes = [];
+
+    	if (endIndex == null) {
+    		endIndex = this.selects.length - 1;
+    	}
+    	
+    	for (var i = 0; i <= endIndex; i++) {
+    		this.selectedCcTypes.push(this.selects[i].value);
+    	}
+    },
+
+    reloadCcType : function (selectCcType, mantainSelectedValue = false) {
+    	var value = selectCcType.value;
+    	selectCcType.update();
+    	
+    	for (var i = 0; i < this.ccTypes.length; i++) {
+    		if ((mantainSelectedValue && value == this.ccTypes[i].value)
+    	    	|| this.selectedCcTypes.indexOf(this.ccTypes[i].value) == -1) {
+    			var option = document.createElement('option');
+    			option.value = this.ccTypes[i].value;
+    			option.innerHTML = this.ccTypes[i].label;
+    			selectCcType.options.add(option);
+    		}
+    	}
+    },
+
+    removeCcType : function (selectCcType, ccType) {
+		for (var i = 0; i < selectCcType.options.length; i++) {
+    		if (selectCcType.options[i].value == ccType) {
+    			selectCcType.remove(i);
+    			break;
+    		}
+    	}
+    },
+
+    reloadProcessor : function (selectCcType) {
+    	var ccType = selectCcType.value;
+    	var selectProcessor = $(selectCcType).up('tr').down('td.processor select');
+    	
+    	for (var i = 0; i < this.ccTypeProcessors.length; i++) {
+    		if (this.ccTypeProcessors[i].ccType == ccType) {
+    			var value = selectProcessor.value;
+    			var processors = [];
+    			selectProcessor.update();
+    			
+    			for (var j = 0; j < this.ccTypeProcessors[i].processors.length; j++) {
+    				var option = document.createElement('option');
+    				option.value = this.ccTypeProcessors[i].processors[j].value;
+    				option.innerHTML = this.ccTypeProcessors[i].processors[j].label;
+    				selectProcessor.options.add(option);
+
+    				processors.push(option.value);
+    			}
+
+    			if (processors.indexOf(value) != -1) {
+    				selectProcessor.value = value;
+    			}
+    			else {
+    				selectProcessor.options[0].selected = true;
+    			}
+    		}
+    	}
+    },
+
+    toggleAddToEndBtn : function () {
+    	if (this.selectedCcTypes.length < this.ccTypes.length) {
+    		$('addToEndBtn<?php echo $_htmlId ?>').show();
+    	}
+    	else {
+    		$('addToEndBtn<?php echo $_htmlId ?>').hide();
+    	}
+    }
+}
+
+// bind add action to "Add" button in last row
+Event.observe('addToEndBtn<?php echo $_htmlId ?>', 'click', arrayRow<?php echo $_htmlId ?>.addNew.bind(arrayRow<?php echo $_htmlId ?>, '', ''));
+
+// add existing rows
+<?php
+$_addAfterId = "headings{$_htmlId}";
+foreach ($this->getArrayRows() as $_rowId => $_row) {
+    echo "arrayRow{$_htmlId}.add(" . $_row->toJson() . ", '{$_addAfterId}');\n";
+    $_addAfterId = $_rowId;
+}
+?>
+
+// update selects values
+// updateAllCcTypes();
+
+// initialize standalone button
+$('empty<?php echo $_htmlId ?>').hide();
+Event.observe('emptyAddBtn<?php echo $_htmlId ?>', 'click', function () {
+    $('grid<?php echo $_htmlId ?>').show();
+    $('empty<?php echo $_htmlId ?>').hide();
+    arrayRow<?php echo $_htmlId ?>.addNew('', '');
+});
+
+// if no rows, hide grid and show button only
+<?php if (!$this->getArrayRows()):?>
+arrayRow<?php echo $_htmlId ?>.showButtonOnly();
+<?php endif;?>
+
+// toggle the grid, if element is disabled (depending on scope)
+<?php if ($this->getElement()->getDisabled()):?>
+toggleValueElements({checked:true}, $('grid<?php echo $_htmlId ?>').parentNode);
+<?php endif;?>
+
+</script>

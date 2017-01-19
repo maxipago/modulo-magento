@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<layout version="1.0.2">
+
+    <default>
+        <reference name="head">
+            <action method="addJs">
+                <script>maxipago/checkoutapi/js/maxipago.js</script>
+            </action>
+        </reference>
+    </default>
+
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>maxipago/checkoutapi/js/maxipago.js</script>
+            </action>
+        </reference>
+        <reference name="before_body_end">
+        	<block type="checkoutapi/form_fraud" name="maxipago_fraud" template="maxipago/checkoutapi/form/fraud.phtml" />
+        </reference>
+    </checkout_onepage_index>
+
+    <checkoutapi_standard_payment>
+        <reference name="head">
+            <action method="addCss">
+                <stylesheet>maxipago/checkoutapi/css/styles.css</stylesheet>
+            </action> 
+        </reference>
+        <remove name="left"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/payment" name="payment" template="maxipago/checkoutapi/payment.phtml" />
+        </reference>
+    </checkoutapi_standard_payment>
+    
+    <checkoutapi_standard_return>
+        <remove name="left"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/empty.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/return" name="return" template="maxipago/checkoutapi/return.phtml" />
+        </reference>
+    </checkoutapi_standard_return>
+
+    <checkoutapi_standard_log>
+        <remove name="left"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/empty.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/log" name="log" template="maxipago/checkoutapi/log.phtml" />
+        </reference>
+    </checkoutapi_standard_log>
+    
+    <checkoutapi_standard_error>
+        <remove name="left"/>
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/error" name="error" template="maxipago/checkoutapi/error.phtml" />
+        </reference>
+    </checkoutapi_standard_error>
+</layout>

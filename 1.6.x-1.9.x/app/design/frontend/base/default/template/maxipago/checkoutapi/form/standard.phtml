@@ -1,0 +1,256 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+
+<fieldset class="form-list">
+    <?php 
+          $_code = $this->getMethodCode();
+          $_standardPayment = Mage::getSingleton('checkoutapi/standard');
+          $_totals = Mage::getSingleton('checkout/session')->getQuote()->collectTotals();  
+          $_quote = Mage::getSingleton('checkout/session')->getQuote();
+          
+          $_bankSlip = $_standardPayment->getConfigData("bankSlip");
+          $activeBankSlip = $_standardPayment->getConfigData("activeBankSlip");
+          $activeTef = $_standardPayment->getConfigData("activeTef");
+          $paymentTef = explode(",",$_standardPayment->getConfigData("paymentTef"));
+    ?>
+    
+    <style>
+        ul.mpContainer li.mpPaymentMethod{
+            float: left;
+            padding: 5px;
+            width: 80px;
+            height: 30px;
+        }
+        ul.mpContainer li input{
+            float: left;
+            margin-right: 5px;
+        }
+        ul.mpContainer li span.mpPaymentFlag{
+            float: left;
+            width: 60px;
+            height: 50px;
+            background-image: url(<?php echo $this->getSkinUrl('maxipago/checkoutapi/images/paymentFlags1.png'); ?>);
+            background-repeat: no-repeat;
+        }
+        /* Diners */
+        ul.mpContainer li span.mpPaymentFlagDC{
+            background-position: -184px -8px;
+        }
+        /* Visa */
+        ul.mpContainer li span.mpPaymentFlagVI{
+            background-position: 1px -8px;
+        }
+        /* Master */
+        ul.mpContainer li span.mpPaymentFlagMC{
+            background-position: -60px -8px;
+        }
+        /* Amex */
+        ul.mpContainer li span.mpPaymentFlagAM{
+            background-position: -123px -8px;
+        }
+        /* Boleto */
+        ul.mpContainer li span.mpPaymentFlagBL{
+            background-position: -556px -8px;
+        }
+        /* Itaú */
+        ul.mpContainer li span.mpPaymentFlagIT{
+            background-position: -618px -8px;
+        }
+        /* Peela */
+        ul.mpContainer li span.mpPaymentFlag14{
+            background-position: -369px -8px;
+        }
+        /* Discover */
+        ul.mpContainer li span.mpPaymentFlagDI{
+            background-position: -308px -8px;
+        }
+        /* Elo */
+        ul.mpContainer li span.mpPaymentFlagELO{
+            background-position: -246px -8px;
+        }
+        /* Aura */
+        ul.mpContainer li span.mpPaymentFlag18{
+            background-position: -431px -8px;
+        }
+        /* JCB */
+        ul.mpContainer li span.mpPaymentFlag19{
+            background-position: -494px -8px;
+        }
+        /* Bradesco */
+        ul.mpContainer li span.mpPaymentFlagBR{
+            background-position: -679px -8px;
+        }
+        /* Banco do Brasil */
+        ul.mpContainer li span.mpPaymentFlag23{
+            background-position: -741px -8px;
+        }
+    </style>
+    
+    <ul id="payment_form_<?php echo $_code ?>" class="mpContainer" style="display:none">
+        <li class="forma_pagamento" style="float:left;">
+            <ul>
+                <li>
+                    <label for="mpPaymentMethod"><?php echo Mage::helper('payment')->__('Selecione a forma de pagamento') ?> <span class="required">*</span></label><br/>
+                    <input type="hidden" id="mpPaymentMethod" name="payment[cc_type]" class="required-entry" value=""/>
+                    <ul>
+                        
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'block'" value="VI" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagVI">
+                                &nbsp;
+                            </span>
+                        </li>
+                        
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'block'" value="MC" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagMC">
+                                &nbsp;
+                            </span>
+                        </li>
+                        
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'block'" value="DC" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagDC">
+                                &nbsp;
+                            </span>
+                        </li>
+                        
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'block'" value="AM" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagAM">
+                                &nbsp;
+                            </span>
+                        </li>
+                        
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'block'" value="ELO" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagELO">
+                                &nbsp;
+                            </span>
+                        </li>
+                                                
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'block'" value="DI" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagDI">
+                                &nbsp;
+                            </span>
+                        </li>
+                        
+                        <?php
+                        if (($_bankSlip != '')&&($activeBankSlip == '1')){
+                        ?>
+						<input type="hidden" value="<?php echo $activeBankSlip; ?>" />
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'none'" value="<?php echo $_bankSlip;?>" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagBL">
+                                &nbsp;
+                            </span>
+                        </li>
+                        
+                        <?php
+                        }
+                        ?>
+                        
+                        <?php
+                        if (in_array("17", $paymentTef)&&($activeTef == '1')){
+                        ?>
+						<input type="hidden" value="<?php echo $activeTef; ?>" />
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'none'" value="17" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagBR">
+                                &nbsp;
+                            </span>
+                        </li>
+                        <?php
+                        }
+                        ?>
+                        <?php
+                        if (in_array("18", $paymentTef)&&($activeTef == '1')){
+                        ?>
+                        <li class="mpPaymentMethod">
+                            <input type="radio" onclick="document.getElementById('mpPaymentMethod').value = this.value; document.getElementById('displayCcInfo').style.display = 'none'" value="18" name="mpPaymentMethodR" autocomplete="off">
+                            <span class="mpPaymentFlag mpPaymentFlagIT">
+                                &nbsp;
+                            </span>
+                        </li>
+                        <?php
+                        }
+                        ?>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li id="displayCcInfo" style="display: none;">
+            <ul>
+                <li>
+                    <div class="input-box">
+                        <label for="<?php echo $_code ?>_cc_owner"><?php echo Mage::helper('payment')->__('Name on Card') ?> <span class="required">*</span></label><br/>
+                        <input type="text" title="<?php echo Mage::helper('payment')->__('Name on Card') ?>" class="required-entry input-text" id="<?php echo $_code ?>_cc_owner" name="payment[cc_owner]" value=""/>
+                    </div>
+                </li>
+                <li>
+                    <div class="input-box">
+                        <label for="<?php echo $_code ?>_cc_number"><?php echo Mage::helper('payment')->__('Credit Card Number') ?> <span class="required">*</span></label><br/>
+                        <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]" title="<?php echo Mage::helper('payment')->__('Credit Card Number') ?>" class="required-entry input-text validate-cc-number" value="" maxlength="16"/>
+                    </div>
+                </li>
+                <li>
+                    <div class="input-box">
+                        <label for="<?php echo $_code ?>_expiration"><?php echo Mage::helper('payment')->__('Expiration Date') ?> <span class="required">*</span></label><br/>
+                        <select id="<?php echo $_code ?>_expiration" style="width:140px;" name="payment[cc_exp_month]" class="validate-cc-exp required-entry">
+                        <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
+                        <?php foreach ($this->getCcMonths() as $k=>$v): ?>
+                            <option value="<?php echo $k ?>" ><?php echo $v ?></option>
+                        <?php endforeach ?>
+                        </select>
+                        <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
+                        <select id="<?php echo $_code ?>_expiration_yr" style="width:103px;" name="payment[cc_exp_year]" class="required-entry">
+                        <?php foreach ($this->getCcYears() as $k=>$v): ?>
+                            <option value="<?php echo $k ? $k : '' ?>" ><?php echo $v ?></option>
+                        <?php endforeach ?>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="input-box">
+                        <input type="hidden" id="<?php echo $_code ?>_split_value" name="payment[maxipago_split_value]" value="<?php echo $this->getInfoData('maxipago_split_value')?>"/>
+                        <label for="<?php echo $_code ?>_split"><?php echo Mage::helper('payment')->__('Parcelas') ?> <span class="required">*</span></label><br/>
+                        <select id="<?php echo $_code ?>_split" style="width:140px;" name="payment[maxipago_split_number]" class="required-entry" onchange="document.getElementById('<?php echo $_code ?>_split_value').value = this.options[this.selectedIndex].text.replace(/.*R\$/,'').replace(/\,/,'.');">
+                        <?php $_ccSplitSimulator = $this->getInfoData('maxipago_split_number') ?>
+                        <?php foreach ($this->getSplitSimulate($_totals->grand_total) as $k=>$v): ?>
+                            <option value="<?php echo $k ?>" ><?php echo $v ?></option>
+                        <?php endforeach ?>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+                    <div class="input-box">
+                        <div class="v-fix">
+                            <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" />
+                        </div>
+                        <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</fieldset>
