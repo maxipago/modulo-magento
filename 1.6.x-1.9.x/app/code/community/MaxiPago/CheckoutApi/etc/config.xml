@@ -21,7 +21,7 @@
 <config>
     <modules>
         <MaxiPago_CheckoutApi>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
         </MaxiPago_CheckoutApi>
     </modules>
     
@@ -131,9 +131,9 @@
                 <maxipago_fraud_score>
                     <to_order_payment>*</to_order_payment>
                 </maxipago_fraud_score>
-                <maxipago_cc_token>
-                    <to_order_payment>*</to_order_payment>
-                </maxipago_cc_token>
+                 <maxipago_cc_token>
+                     <to_order_payment>*</to_order_payment>
+                 </maxipago_cc_token>
              </sales_convert_quote_payment>
         </fieldsets>
     </global>
@@ -154,6 +154,7 @@
     <frontend>
         <secure_url>
             <checkoutapi>/checkoutapi/standard</checkoutapi>
+            <checkoutapi>/checkoutapi/redepay</checkoutapi>
         </secure_url>   
         <routers>
             <checkoutapi>
@@ -207,26 +208,26 @@
                   <active>1</active>
                   <model>MaxiPago_CheckoutApi_Model_Creditcard</model>
                   <order_status>pending</order_status>
-                  <title>Cartao de Credito</title>
+                  <title>maxiPago! - Cartões de Crédito</title>
             </maxipagocheckoutapi_creditcard>
             <maxipagocheckoutapi_bankslip>
                   <active>1</active>
                   <model>MaxiPago_CheckoutApi_Model_Bankslip</model>
                   <order_status>pending</order_status>
-                  <title>Boleto Bancario</title>
+                  <title>maxiPago! - Boleto Bancário</title>
             </maxipagocheckoutapi_bankslip>
             <maxipagocheckoutapi_tef>
                   <active>1</active>
                   <model>MaxiPago_CheckoutApi_Model_Tef</model>
                   <order_status>pending</order_status>
-                  <title>Transferecia Online</title>
+                  <title>maxiPago! - Transferência Online</title>
             </maxipagocheckoutapi_tef>
-            <!-- <maxipagocheckoutapi_redepay>
+            <maxipagocheckoutapi_redepay>
                   <active>1</active>
                   <model>MaxiPago_CheckoutApi_Model_Redepay</model>
                   <order_status>pending</order_status>
-                  <title>Rede Pay</title>
-            </maxipagocheckoutapi_redepay> -->
+                  <title>maxiPago! - RedePay</title>
+            </maxipagocheckoutapi_redepay>
         </payment>
     </default>
 </config>

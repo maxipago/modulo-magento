@@ -187,6 +187,9 @@ class MaxiPago_CheckoutApi_Model_Api
     		elseif($paymentMethod == 'maxipagocheckoutapi_tef') {
     			$sale->addChild('processorID', $ccType);
     		}
+    		elseif ($paymentMethod == 'maxipagocheckoutapi_redepay') {
+    			$sale->addChild('processorID', '18');
+    		}
     	}
     	 
     	$sale->addChild('referenceNum', $prefixo.$orderIncrementId);
@@ -399,9 +402,9 @@ class MaxiPago_CheckoutApi_Model_Api
     	elseif($paymentMethod == 'maxipagocheckoutapi_tef') {
     		$sale->addChild('customerIdExt',$order->getData("customer_taxvat"));
     		$onlineDebit = $payType->addChild('onlineDebit');
-    		$onlineDebit->addChild('parametersURL','?id=' . $prefixo . $orderIncrementId);
+    		$onlineDebit->addChild('parametersURL', '?id=' . $prefixo . $orderIncrementId);
     	}
-    	else {
+    	elseif($paymentMethod == 'maxipagocheckoutapi_bankslip') {
     		$boleto = $payType->addChild('boleto');
     		$dayPayment = Mage::helper('checkoutapi')->getPaymentConfig($order->getPayment(), 'daypayment', $storeId);
     		$boleto->addChild('expirationDate', date('Y-m-d', strtotime('+' . $dayPayment . ' days')));
@@ -411,6 +414,10 @@ class MaxiPago_CheckoutApi_Model_Api
     		else {
     			$boleto->addChild('number', $ccType . substr($orderIncrementId, -8));
     		}
+    	}
+    	elseif($paymentMethod == 'maxipagocheckoutapi_redepay') {
+    		$eWallet = $payType->addChild('eWallet');
+    		$eWallet->addChild('parametersURL', 'type=redepay');
     	}
     	 
     	$paymentXml = $sale->addChild('payment');
@@ -427,6 +434,9 @@ class MaxiPago_CheckoutApi_Model_Api
     		}
     	}
     	$paymentXml->addChild('chargeTotal', $chargeTotal);
+    	if($paymentMethod == 'maxipagocheckoutapi_redepay') {
+    		$paymentXml->addChild('shippingTotal', number_format($order->getShippingAmount(), 2, '.', ''));
+    	}
     	
     	// Adiciona as informações dos produtos
     	$itemIndex = 1;
@@ -872,17 +882,6 @@ class MaxiPago_CheckoutApi_Model_Api
     		$requestCustomer->addChild('sex', $consumer->getData('gender') == 1 ? 'M' : 'F');
     	}
     	
-//     	$customerAddressId = $consumer->getDefaultBilling(); 
-//     	if ($customerAddressId) {
-//     		$address = Mage::getModel('customer/address')->load($customerAddressId);
-//     		if ($address->getPostcode()) {
-//     			$requestCustomer->addChild('zip', $address->getPostcode());
-//     		}
-//     		if ($address->getCountry()) {
-//     			$requestCustomer->addChild('country', $address->getCountry());
-//     		}
-//     	}
-    	
     	$responseXml = $this->sendMaxiPagoRequest($customerXml->asXML(), $sandbox, self::POST_API);
     	
     	$responseMP = simplexml_load_string($responseXml);
@@ -975,6 +974,25 @@ class MaxiPago_CheckoutApi_Model_Api
     	 
     	$responseMP = simplexml_load_string($responseXml);
     	
+    	return $responseMP;
+    }
+    
+    public function consultTransaction($transactionId) {
+    	$sandbox = Mage::helper('checkoutapi')->getGlobalConfig('sandbox');
+    	 
+    	$rapi = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><rapi-request/>');
+    	$verification = $rapi->addChild('verification');
+    	$verification->addChild('merchantId', Mage::helper('checkoutapi')->getGlobalConfig('sellerId'));
+    	$verification->addChild('merchantKey', Mage::helper('checkoutapi')->getGlobalConfig('sellerKey'));    	 
+    	$rapi->addChild('command', 'transactionDetailReport');
+    	$request = $rapi->addChild('request');
+    	$filterOptions = $request->addChild('filterOptions');
+    	$filterOptions->addChild('transactionId', $transactionId);
+    	
+    	$responseXml = $this->sendMaxiPagoRequest($rapi->asXML(), $sandbox, self::REPORTS_API);
+
+    	$responseMP = simplexml_load_string($responseXml);
+    	 
     	return $responseMP;
     }
     

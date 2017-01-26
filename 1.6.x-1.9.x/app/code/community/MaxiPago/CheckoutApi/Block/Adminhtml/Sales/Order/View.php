@@ -76,6 +76,13 @@ class MaxiPago_CheckoutApi_Block_Adminhtml_Sales_Order_View extends Mage_Adminht
             	}
             }
         }
+        elseif ($order->getPayment()->getMethodInstance()->getCode() == 'maxipagocheckoutapi_redepay') {
+        	$this->_addButton('order_mpConsultar', array(
+        			'label'     => 'Consultar',
+        			'onclick'   => "setLocation('{$this->getRedepayUpdateUrl($order->getId())}')",
+        			'class'     => ''
+        	), 0, 1);
+        }
     }
 
     protected function getCaptureUrl()
@@ -96,6 +103,11 @@ class MaxiPago_CheckoutApi_Block_Adminhtml_Sales_Order_View extends Mage_Adminht
     protected function getReembolsoUrl($invoiceId)
     {
     	return $this->getUrl('*/sales_order_creditmemo/new', array('invoice_id' => $invoiceId));
+    }
+    
+    protected function getRedepayUpdateUrl($orderId)
+    {
+    	return $this->getUrl('checkoutapi/redepay/update', array('order_id' => $orderId));
     }
     
     protected function getIsRecurring()

@@ -22,16 +22,62 @@
         <?php echo $this->htmlEscape($this->getMethod()->getTitle()); ?>
     </strong>
     <br/> 
-    <?php 
+    <?php
+        $metodoPagamento = $this->getInfo()->getMethod();
+
         if($this->getInfo()->getData("cc_type") != NULL){
-            $tcTxtPaymentMethod = array("Diners Club","Visa","Mastercard","American Express","Elo","Discovery","Transferência Online - Bradesco","Transferência Online - Itaú","Boleto Bancário - Itaú","Boleto Bancário - Bradesco","Boleto Bancário - Banco do Brasil","Boleto Bancário - HSBC","Boleto Bancário - Santander","Boleto Bancário - Caixa Econômica Federal");
+            $tcTxtPaymentMethod = array(
+                "Diners Club",
+                "Visa",
+                "Mastercard",
+                "American Express",
+                "Elo",
+                "Discovery",
+                "Transferência Online - Bradesco",
+                "Transferência Online - Itaú",
+                "Boleto Bancário - Itaú",
+                "Boleto Bancário - Bradesco",
+                "Boleto Bancário - Banco do Brasil",
+                "Boleto Bancário - HSBC",
+                "Boleto Bancário - Santander",
+                "Boleto Bancário - Caixa Econômica Federal"
+            );
             $tcIdPaymentMethod = array("DC","VI","MC","AM","ELO","DI","17","18","11","12","13","14","15","16");
             $tcIdPaymentMethodCreditCard = array("","2","3","4","5","15","16","18","19");
 
-            echo $tcTxtPaymentMethod[array_search($this->getInfo()->getData("cc_type"), $tcIdPaymentMethod)];
-        } 
+            echo $tcTxtPaymentMethod[array_search($this->getInfo()->getData("cc_type"), $tcIdPaymentMethod)];;
+        }
     ?>
-    <br/> Nome no Cart&atilde;o: <?php echo $this->getInfo()->getCcOwner();?>
-    <br/> &Uacute;ltimos 4 D&iacute;gitos do Cart&atilde;o: <?php echo $this->getInfo()->getCcLast4();?>
+
+    <?php
+        /**
+         * Métodos de pagamento
+         *
+         * Cartão de Crédito = maxipagocheckoutapi_creditcard
+         * Boleto = maxipagocheckoutapi_bankslip
+         * Transferência = maxipagocheckoutapi_tef
+         */
+    ?>
+
+    <?php if ($metodoPagamento == 'maxipagocheckoutapi_bankslip'): ?>
+
+        <a class="button btn-cart"
+           href="<?php echo $this->getInfo()->getData('maxipago_url_payment') ?>"
+           target="_blank">Imprimir Boleto</a>
+
+    <?php elseif ($metodoPagamento == 'maxipagocheckoutapi_tef'): ?>
+
+        <a class="button btn-cart"
+           href="<?php echo $this->getInfo()->getData('maxipago_url_payment') ?>"
+           target="_blank">Transferência Online</a>
+
+    <?php elseif ($metodoPagamento == 'maxipagocheckoutapi_creditcard'): ?>
+        <br/> Nome no Cart&atilde;o: <?php echo $this->getInfo()->getCcOwner();?>
+        <br/> Parcelas: <?php echo $this->getInfo()->getMaxipagoSplitNumber();?>
+        <?php $price = Mage::helper('core')->currency($this->getInfo()->getMaxipagoSplitValue(), true, false); ?>
+        <br/> Valor da Parcelas: <?php echo $price ?>
+        <br/> &Uacute;ltimos 4 D&iacute;gitos do Cart&atilde;o: <?php echo $this->getInfo()->getCcLast4();?>
+    <?php endif; ?>
+
     <br/> Pontua&ccedil;&atilde;o Antifraude: <?php echo $this->getInfo()->getMaxipagoFraudScore();?>
 </p>

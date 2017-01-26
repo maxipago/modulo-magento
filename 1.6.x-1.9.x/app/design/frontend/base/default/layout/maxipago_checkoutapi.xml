@@ -83,4 +83,70 @@
             <block type="checkoutapi/error" name="error" template="maxipago/checkoutapi/error.phtml" />
         </reference>
     </checkoutapi_standard_error>
+    
+    <checkoutapi_redepay_denied>
+    	<reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/redepay_denied" name="checkoutapi.redepay.denied"/>
+        </reference>
+    </checkoutapi_redepay_denied>
+    
+    <checkoutapi_redepay_error>
+    	<reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/redepay_error" name="checkoutapi.redepay.error"/>
+        </reference>
+    </checkoutapi_redepay_error>
+    
+    <checkoutapi_redepay_payment>
+    	<reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/redepay_payment" name="checkoutapi.redepay.payment"/>
+        </reference>
+    </checkoutapi_redepay_payment>
+    
+    <checkoutapi_redepay_pending>
+    	<reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/redepay_pending" name="checkoutapi.redepay.pending"/>
+        </reference>
+    </checkoutapi_redepay_pending>
+    
+    <checkoutapi_redepay_state>
+    	<reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/redepay_state" name="checkoutapi.redepay.state"/>
+        </reference>
+    </checkoutapi_redepay_state>
+    
+    <checkoutapi_redepay_success>
+    	<reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkoutapi/redepay_success" name="checkoutapi.redepay.success"/>
+        </reference>
+    </checkoutapi_redepay_success>
 </layout>

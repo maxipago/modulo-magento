@@ -113,17 +113,16 @@
     </style>
     
     <fieldset class="form-list">
-    
     <ul id="payment_form_<?php echo $_code ?>" class="mpContainer" style="display:none">
+    <input type="hidden" id="mpCcLast4" name="payment[cc_last4]" value="" />
+    <input type="hidden" id="mpCcOwner" name="payment[cc_owner]" value="" />
     <?php
     if($_hasSavedCc) {
     ?>
     <li id='selectCreditCardMp' class="cc_save" style="float:left;width: 100%;">
         <label for="mpPaymentMethod"><?php echo Mage::helper('payment')->__('Selecione o cartão para realizar o pagamento') ?> <span class="required">*</span></label><br/>
         <input type="hidden" id="mpCCType" value="" />
-        <input type="hidden" id="mpEntityId" name="payment[maxipago_cc_token]" class="required-entry" value="" />
-        <input type="hidden" id="mpCcLast4" name="payment[cc_last4]" value="" />
-        <input type="hidden" id="mpCcOwner" name="payment[cc_owner]" value="" />
+    	<input type="hidden" id="mpEntityId" name="payment[maxipago_cc_token]" class="required-entry" value="" />
         <?php
         foreach($_savedCreditcards as $_ccMaxiPago) {
         ?>
@@ -253,34 +252,34 @@
                     </select>
                 </div>
             </li>
+		</ul>
+	</li>
+            <?php
+            if(!$_isRecurring) {
+            ?>
+            <li>
+                <div class="input-box">
+                    <input type="hidden" id="<?php echo $_code ?>_split_value" name="payment[maxipago_split_value]" value="<?php echo $this->getInfoData('maxipago_split_value')?>"/>
+                    <label for="<?php echo $_code ?>_split"><?php echo Mage::helper('payment')->__('Parcelas') ?> <span class="required">*</span></label><br/>
+                    <select id="<?php echo $_code ?>_split" style="width:140px;" name="payment[maxipago_split_number]" class="required-entry" onchange="document.getElementById('<?php echo $_code ?>_split_value').value = this.options[this.selectedIndex].text.replace(/.*R\$/,'').replace(/\,/,'.');">
+                        <?php $_ccSplitSimulator = $this->getInfoData('maxipago_split_number') ?>
+                        <?php foreach ($this->getSplitSimulate($_totals->grand_total) as $k=>$v): ?>
+                            <option value="<?php echo $k ?>" ><?php echo $v ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            </li>
+            <?php
+            }
+            ?>
+            <li>
+                <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+                <div class="input-box">
+                    <div class="v-fix">
+                        <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" />
+                    </div>
+                    <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+                </div>
+            </li>
         </ul>
-    </li>
-    <?php
-    if(!$_isRecurring) {
-    ?>
-    <li>
-    	<div class="input-box">
-	        <input type="hidden" id="<?php echo $_code ?>_split_value" name="payment[maxipago_split_value]" value="<?php echo $this->getInfoData('maxipago_split_value')?>"/>
-	        <label for="<?php echo $_code ?>_split"><?php echo Mage::helper('payment')->__('Parcelas') ?> <span class="required">*</span></label><br/>
-	        <select id="<?php echo $_code ?>_split" style="width:140px;" name="payment[maxipago_split_number]" class="required-entry" onchange="document.getElementById('<?php echo $_code ?>_split_value').value = this.options[this.selectedIndex].text.replace(/.*R\$/,'').replace(/\,/,'.');">
-	        	<?php $_ccSplitSimulator = $this->getInfoData('maxipago_split_number') ?>
-	        	<?php foreach ($this->getSplitSimulate($_totals->grand_total) as $k=>$v): ?>
-	            	<option value="<?php echo $k ?>" ><?php echo $v ?></option>
-	            <?php endforeach ?>
-	        </select>
-        </div>
-    </li>
-    <?php
-    }
-    ?>
-    <li>
-        <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
-       	<div class="input-box">
-           	<div class="v-fix">
-               	<input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" />
-            </div>
-        	<a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
-        </div>
-    </li>
-    </ul>
     </fieldset>

@@ -80,7 +80,7 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
 
     protected function updateOrderMaxiPagoCheckout($record, $code) {
 
-    	$orderIncrementalId = str_replace(Mage::getStoreConfig('payment/maxipagocheckoutapi_creditcard/prefixo'), '', (string)$record->referenceNumber);
+    	$orderIncrementalId = $this->removePrefix((string)$record->referenceNumber);
         $order = Mage::getModel('sales/order')->loadByIncrementId($orderIncrementalId);
         
         if($order->getData('increment_id') != null) {
@@ -177,6 +177,15 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
     	Mage::getSingleton('checkoutapi/processador')->atualizarPagamentoRecorrente($profile, $record);
     }
     
+    protected function removePrefix($referenceNumber) {
+    	$incremetalOrderId = $referenceNumber;
+    	$paymentMethods = array('creditcard', 'bankslip', 'tef', 'redepay');
+    	foreach ($paymentMethods as $p) {
+    		$incremetalOrderId = str_replace(Mage::getStoreConfig("payment/maxipagocheckoutapi_$p/prefixo"), '', $incremetalOrderId);
+    	}
+    	return $incremetalOrderId;
+    }
+    
     public function salesOrderBeforeCancellation($observer) {
     	
     	$order = $observer->getEvent()->getPayment()->getOrder();
@@ -256,7 +265,8 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
     	
     	if ($methodCode != 'maxipagocheckoutapi_creditcard'
     		&& $methodCode != 'maxipagocheckoutapi_bankslip'
-    		&& $methodCode != 'maxipagocheckoutapi_tef') {
+    		&& $methodCode != 'maxipagocheckoutapi_tef'
+    		&& $methodCode != 'maxipagocheckoutapi_redepay') {
     		return $this;
     	}
     	

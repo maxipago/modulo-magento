@@ -84,14 +84,16 @@ class MaxiPago_CheckoutApi_Model_Processador
 		$this->enviarNotificacaoMudancaStatus($order, $mensagem, 'Pagamento confirmado');
 	}
 	
-	public function gerarFatura($order, $invoiceTxnId)
+	public function gerarFatura($order, $invoiceTxnId, $mensagem = null)
 	{
 		$qtys = array();
 		foreach ($order->getAllItems() as $item) {
 			$qtys[$item->getId()] = $item->getQtyOrdered();
 		}
 		
-		$mensagem = 'maxiPago! - Aprovado. Pagamento confirmado.';
+		if (!$mensagem)
+			$mensagem = 'maxiPago! - Aprovado. Pagamento confirmado.';
+		
 		$invoice = $order->prepareInvoice($qtys);
 		$invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
 		$invoice->setTransactionId($invoiceTxnId);
@@ -107,17 +109,6 @@ class MaxiPago_CheckoutApi_Model_Processador
 	}
 	
 	public function estornar($order, $transactionMpId = null, $offline = false) {
-		
-		$payment = $order->getPayment();
-		
-// 		if (!$transactionMpId || $payment->getAuthorizationTransaction()->getTxnId() == $transactionMpId) {
-// 			$transactionMpId = $payment->getAuthorizationTransaction()->getTxnId() . '-refund';
-// 		}
-		
-// 		$payment->setTransactionId($transactionMpId);
-// 		$payment->addTransaction(Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND, null, false,
-// 				Mage::helper('core')->__('Estorno de %s.', round($order->getGrandTotal(), 2))
-// 				);
 		
 		$state  = Mage_Sales_Model_Order::STATE_CANCELED;
 		$statusModel = Mage::getModel('sales/order_status')->loadDefaultByState($state);
@@ -197,7 +188,6 @@ class MaxiPago_CheckoutApi_Model_Processador
 		$this->enviarNotificacaoMudancaStatus($order, $mensagem, 'Pagamento estornado');
 			
 		$transactionSave->addObject($order)
-		->addObject($payment)
 		->save();
 	}
 	

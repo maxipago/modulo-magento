@@ -1,0 +1,14 @@
+
+<div class="page-title">
+    <h1><?php echo $this->__('Seu pedido #%s foi cancelado.', $this->getRealOrderId()) ?></h1>
+</div>
+
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+
+<p><?php echo $this->__('O pagamento não foi autorizado. Para mais informações, contate o emissor.') ?></p>
+<p><?php echo $this->__('Pedimos desculpas pela incoveniência.') ?></p>
+
+<?php if ($this->canReorder()): ?>
+<p><?php echo $this->__('Para tentar o pagamento do pedido novamente, por favor clique no link abaixo:') ?></p>
+<p><a href="<?php echo $this->getReorderUrl() ?>" title="<?php echo $this->__('Recomprar') ?>"><?php echo $this->__('Recomprar') ?></a></p>
+<?php endif; ?>

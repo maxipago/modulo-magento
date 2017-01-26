@@ -1,0 +1,14 @@
+
+<div class="page-title">
+    <h1><?php echo $this->__('Seu pedido #%s está %s.', $this->getRealOrderId(), $this->getOrder()->getStatusLabel()) ?></h1>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+
+<div class="buttons-set">
+	<button type="button" class="button btn-continue" title="Imprimir Boleto" onclick="window.open('<?php echo $this->getPrintOrderUrl()?>');">
+		<span><span>Imprimir Boleto</span></span>
+	</button>	
+	<button type="button" class="button btn-continue" title="Continuar Comprando" onclick="window.location='<?php echo $this->getUrl() ?>';">
+		<span><span>Continuar Comprando</span></span>
+	</button>
+</div>

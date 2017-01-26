@@ -120,7 +120,6 @@ class MaxiPago_CheckoutApi_Model_Standard extends Mage_Payment_Model_Method_Abst
         $info = $this->getInfoInstance();
         $info->setCcType($data->getCcType())
              ->setCcOwner($data->getCcOwner())
-//              ->setCcLast4(substr($data->getCcNumber(), -4))
              ->setCcNumber($data->getCcNumber())
              ->setCcCid($data->getCcCid())
              ->setCcExpMonth($data->getCcExpMonth())
@@ -130,12 +129,11 @@ class MaxiPago_CheckoutApi_Model_Standard extends Mage_Payment_Model_Method_Abst
              ->setMaxipagoCcToken($data->getMaxipagoCcToken())
              ->setCcNumberEnc($info->encrypt($info->getCcNumber()))
         	 ->setCcCidEnc($info->encrypt($info->getCcCid()));
-        
-       	if ($data->getCcLast4())
-       		$info->setCcLast4($data->getCcLast4());
-       	else
-       		$info->setCcLast4(substr($data->getCcNumber(), -4));
-       		
+		if ($data->getCcLast4())
+			$info->setCcLast4($data->getCcLast4());
+		else
+			$info->setCcLast4(substr($data->getCcNumber(), -4));
+			
         return $this;
     }
     

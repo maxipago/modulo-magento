@@ -488,8 +488,8 @@
                     </fields>
                 </maxipagocheckoutapi_tef>
             
-            	<!-- <maxipagocheckoutapi_redepay translate="label">
-                    <label>maxiPago! - Rede Pay</label>
+            	<maxipagocheckoutapi_redepay translate="label">
+                    <label>maxiPago! - RedePay</label>
                     <sort_order>334</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -566,7 +566,7 @@
                             <show_in_store>0</show_in_store>
                         </emailStatus>
                     </fields>
-                </maxipagocheckoutapi_redepay> -->
+                </maxipagocheckoutapi_redepay>
             </groups>
         </payment>
     </sections>

@@ -148,10 +148,10 @@ class MaxiPago_CheckoutApi_Model_Creditcard extends MaxiPago_CheckoutApi_Model_S
 			        	->setCcCidEnc($quote->getPayment()->getCcCidEnc())
 	            		->setMaxipagoSplitNumber($quote->getPayment()->getMaxipagoSplitNumber())
 			            ->setMaxipagoSplitValue($quote->getPayment()->getMaxipagoSplitValue());
-	            	if ($quote->getPayment()->getCcLast4())
-	            		$payment->setCcLast4($quote->getPayment()->getCcLast4());
-	            	else
-	            		$payment->setCcLast4(substr($quote->getPayment()->getCcNumber(), -4));
+			        if ($quote->getPayment()->getCcLast4())
+			        	$payment->setCcLast4($quote->getPayment()->getCcLast4());
+			        else
+			        	$payment->setCcLast4(substr($quote->getPayment()->getCcNumber(), -4));
 	            	$payment->setData('maxipago_transaction_id', $txnId);
 	            	$payment->setData('maxipago_token_transaction', (string)$responseMP->orderID);
 	            	$payment->setData('maxipago_capture_timestamp', (string)$responseMP->transactionTimestamp);
