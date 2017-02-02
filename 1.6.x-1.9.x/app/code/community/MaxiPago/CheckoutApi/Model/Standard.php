@@ -276,7 +276,14 @@ class MaxiPago_CheckoutApi_Model_Standard extends Mage_Payment_Model_Method_Abst
     	// Chama o auth da maxiPago
     	$responseMP = Mage::getSingleton('checkoutapi/api')->auth($order);
     	$responseCode = $responseMP && property_exists($responseMP, 'responseCode') ? intval($responseMP->responseCode) : -1;
-    	
+        
+        //Disparo email de ordem de compra
+	if(!$order->getEmailSent()) {
+	    $order->sendNewOrderEmail();
+	    $order->setEmailSent(true);
+	    $order->save();
+	}
+
     	switch ($responseCode) {
     		
     		case 0:
