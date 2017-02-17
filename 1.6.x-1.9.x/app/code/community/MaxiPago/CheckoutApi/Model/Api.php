@@ -939,6 +939,7 @@ class MaxiPago_CheckoutApi_Model_Api
     }
     
     public function detailReport($orderId = null, $pageToken = null, $pageNumber = 1) {
+                
     	$sandbox = Mage::helper('checkoutapi')->getGlobalConfig('sandbox');
     	
     	$rapi = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><rapi-request/>');
@@ -952,28 +953,28 @@ class MaxiPago_CheckoutApi_Model_Api
     	$request = $rapi->addChild('request');
     	
     	$filterOptions = $request->addChild('filterOptions');
-    	if (!empty($orderId)) {
-    		$filterOptions->addChild('orderId', $orderId);
+        
+    	if (!empty($orderId) and $orderId != null ) {
+            $filterOptions->addChild('orderId', $orderId);
     	}
     	elseif (empty($pageToken)) {
-	    	$filterOptions->addChild('period', 'range');
-	    	$filterOptions->addChild('pageSize', '10');
-	    	$filterOptions->addChild('startDate', date('m/d/Y', strtotime('-3 days')));
-	    	$filterOptions->addChild('endDate', date('m/d/Y'));
-	    	$filterOptions->addChild('startTime', '00:00:00');
-	    	$filterOptions->addChild('endTime', '23:59:59');
-	    	$filterOptions->addChild('orderByName', 'transactionDate');
-	    	$filterOptions->addChild('orderByDirection', 'asc');
+            $filterOptions->addChild('period', 'range');
+            $filterOptions->addChild('pageSize', '100');
+            $filterOptions->addChild('startDate', date('m/d/Y', strtotime('-3 days')));
+            $filterOptions->addChild('endDate', date('m/d/Y'));
+            $filterOptions->addChild('startTime', '00:00:00');
+            $filterOptions->addChild('endTime', '23:59:59');
+            $filterOptions->addChild('orderByName', 'transactionDate');
+            $filterOptions->addChild('orderByDirection', 'asc');
     	}
     	else {
-    		$filterOptions->addChild('pageToken', $pageToken);
-    		$filterOptions->addChild('pageNumber', $pageNumber);
+            $filterOptions->addChild('pageToken', $pageToken);
+            $filterOptions->addChild('pageNumber', $pageNumber);
     	}
-    	
+        
     	$responseXml = $this->sendMaxiPagoRequest($rapi->asXML(), $sandbox, self::REPORTS_API);
     	 
-    	$responseMP = simplexml_load_string($responseXml);
-    	
+    	$responseMP = simplexml_load_string($responseXml);    	
     	return $responseMP;
     }
     

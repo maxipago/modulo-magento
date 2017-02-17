@@ -30,58 +30,47 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
     		return $this;
     	}
 
-    	try {
-
-            Mage::helper('checkoutapi')->log('Executando Cron - updateObOrdersMP', 'maxipago.log');
-
-            $responseMP = Mage::getSingleton('checkoutapi/api')->detailReport();
-
-            if (!$responseMP || intval($responseMP->header->errorCode) != 0) {
-
-                Mage::helper('checkoutapi')->log('Erro ao realizar a consulta: ' . $responseMP->header->errorMsg, 'maxipago.log');
-                return;
-            }
-
-            $setInfo = $responseMP->result->resultSetInfo;
-            $pageToken = (string)$setInfo->pageToken;
-            $numberOfPages = intval($setInfo->numberOfPages);
-            $totalNumberOfRecords = intval($setInfo->totalNumberOfRecords);
-            if ($totalNumberOfRecords > 0) {
-                Mage::helper('checkoutapi')->log('############ Página 1 ############', 'maxipago.log');
-
+        echo 'Executando Cron - updateObOrdersMP';
+        Mage::helper('checkoutapi')->log('Executando Cron - updateObOrdersMP', 'maxipago.log');
+        
+        $responseMP = Mage::getSingleton('checkoutapi/api')->detailReport();
+       
+        if (!$responseMP || intval($responseMP->header->errorCode) != 0) {        	
+            Mage::helper('checkoutapi')->log('Erro ao realizar a consulta: '.$responseMP->header->errorMsg, 'maxipago.log');
+            return;
+        }
+        
+        $setInfo = $responseMP->result->resultSetInfo;
+        $pageToken = (string) $setInfo->pageToken;
+        $numberOfPages = intval($setInfo->numberOfPages);
+        $totalNumberOfRecords = intval($setInfo->totalNumberOfRecords);
+                
+        if($totalNumberOfRecords > 0) {
+            Mage::helper('checkoutapi')->log('############ Página 1 ############', 'maxipago.log');
+            
+            for($i = 1 ; $i <= $numberOfPages; $i++) {
+                
+                Mage::helper('checkoutapi')->log("############ Página $i ############', 'maxipago.log");
+                
+                $responseMP = Mage::getSingleton('checkoutapi/api')->detailReport(null, $pageToken, $i);               
                 $records = $responseMP->result->records->record;
-                foreach ($records as $record) {
-                    //Mage::helper('checkoutapi')->log($record->referenceNumber, 'maxipago.log');
+                
+                foreach($records as $record) {
+                    
+                    Mage::helper('checkoutapi')->log($record->referenceNumber, 'maxipago.log');
                     if (intval($record->recurringPaymentFlag) == 1) {
                         $this->updateRecurringPayment($record);
-                    } else {
+                    }
+                    else {
                         $this->updateOrderMaxiPagoCheckout($record, 'creditcard');
                     }
-                }
-
-                for ($i = 2; $i <= $numberOfPages; $i++) {
-                    Mage::helper('checkoutapi')->log('############ Página ' . $i . ' ############', 'maxipago.log');
-
-                    $responseMP = Mage::getSingleton('checkoutapi/api')->detailReport(null, $pageToken, $i);
-
-                    $records = $responseMP->result->records->record;
-                    foreach ($records as $record) {
-                        //Mage::helper('checkoutapi')->log($record->referenceNumber, 'maxipago.log');
-                        if (intval($record->recurringPaymentFlag) == 1) {
-                            $this->updateRecurringPayment($record);
-                        } else {
-                            $this->updateOrderMaxiPagoCheckout($record, 'creditcard');
-                        }
-                    }
-                }
+            	}
             }
-        } catch (Exception $e) {
-            Mage::logException($e);
         }
     }
 
     protected function updateOrderMaxiPagoCheckout($record, $code) {
-
+        
     	$orderIncrementalId = $this->removePrefix((string)$record->referenceNumber);
         $order = Mage::getModel('sales/order')->loadByIncrementId($orderIncrementalId);
         
@@ -90,7 +79,7 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
             $frase = '';
             $cod_status = (string)$record->transactionState;
             $comment = '(Status: '.(string)$record->transactionState.' - '.$record->transactionStatus.')';
-
+            
             switch ($cod_status){
             	case '6':
             		if ($order->getStatus() == Mage_Sales_Model_Order::STATE_NEW
@@ -110,12 +99,17 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
                 	}
                     break;
                 case '44':
-                	if ($order->getStatus() == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {
+                    
+                	if ($order->getStatus() == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {     
                 		
                 		Mage::getSingleton('checkoutapi/processador')->autorizar($order, (string)$record->transactionID);
-                		if ($order->getPayment()->getData('maxipago_processor_type') != 'authM') {
+                		if ($order->getPayment()->getData('maxipago_processor_type') != 'authM') {                                                                       
+                                        //Aprovo
                 			Mage::getSingleton('checkoutapi/processador')->aprovar($order, true, null);
-                		}
+                                        
+                                        //Captura
+                                        Mage::getSingleton('checkoutapi/api')->capture($order, $order->getGrandTotal());
+                		}   
                 	}
                 	break;
                 case '1':
@@ -141,8 +135,8 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
                 	Mage::getSingleton('checkoutapi/processador')->enviarNotificacaoMudancaStatus($order, $frase, 'Atualização de status');
                 	$order->save();
                     break;
-                case '7':
-                case '9':
+                //case '7':
+                //case '9':
                 case '45':
                 	if ($order->getStatus() != Mage_Sales_Model_Order::STATE_COMPLETE
                 		&& $order->getStatus() != Mage_Sales_Model_Order::STATE_CLOSED
@@ -166,7 +160,7 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
         }
         else {
         	
-            Mage::helper('checkoutapi')->log('Pedido ' . $orderIncrementalId . ' não encontrado', 'maxipago.log');
+            Mage::helper('checkoutapi')->log('Pedido ' . $orderIncrementalId . ' não encontrado', 'maxipago.log');        
         }
     }
     

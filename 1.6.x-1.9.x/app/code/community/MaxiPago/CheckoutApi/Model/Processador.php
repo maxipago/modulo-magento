@@ -40,7 +40,7 @@ class MaxiPago_CheckoutApi_Model_Processador
 	}
 	
 	public function aprovar($order, $captura = false, $transactionMpId = null, $transactionMpTimestamp = null) {
-		
+            		
 		$payment = $order->getPayment();
 		$state  = Mage_Sales_Model_Order::STATE_PROCESSING;
 		$status = true;
