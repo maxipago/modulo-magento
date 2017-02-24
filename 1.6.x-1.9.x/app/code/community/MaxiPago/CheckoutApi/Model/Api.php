@@ -1,4 +1,7 @@
 <?php
+putenv('HTTP_PROXY=172.20.201.42:8080');
+putenv('HTTPS_PROXY=172.20.201.42:8080');
+
 /**
  * Magento
  *
@@ -162,7 +165,7 @@ class MaxiPago_CheckoutApi_Model_Api
     	
     	$transaction = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><transaction-request/>');
     	$transaction->addChild('version', '3.1.1.15');
-    	
+        
     	$verification = $transaction->addChild('verification');
     	$verification->addChild('merchantId', $sellerId);
     	$verification->addChild('merchantKey', $sellerKey);
@@ -272,6 +275,10 @@ class MaxiPago_CheckoutApi_Model_Api
     	$document->addChild('documentType', 'CPF');
     	$document->addChild('documentValue', Mage::helper('checkoutapi')->getDocument($order));
     	 
+        
+        $sale->addChild('customerIdExt',$order->getData("customer_taxvat"));
+        
+        
     	$billing = $sale->addChild('billing');
     	if ($order->getCustomerId())
     		$billing->addChild('id', $order->getCustomerId());
@@ -334,6 +341,7 @@ class MaxiPago_CheckoutApi_Model_Api
     	}
     	
     	// Adiciona a informação do CPF
+        
     	$documents = $billing->addChild('documents');
     	$documents->addAttribute('documentCount', '1');
     	$document = $documents->addChild('document');
@@ -408,6 +416,8 @@ class MaxiPago_CheckoutApi_Model_Api
     		$boleto = $payType->addChild('boleto');
     		$dayPayment = Mage::helper('checkoutapi')->getPaymentConfig($order->getPayment(), 'daypayment', $storeId);
     		$boleto->addChild('expirationDate', date('Y-m-d', strtotime('+' . $dayPayment . ' days')));
+                
+                
     		if($ccType == '11') {
     			$boleto->addChild('number', $ccType . substr($orderIncrementId, -6));
     		}
@@ -667,6 +677,8 @@ class MaxiPago_CheckoutApi_Model_Api
     	$billing->addChild('country', 'BR');
     	$billing->addChild('phone', $phoneNumber);
     	$billing->addChild('email', $billingAddress->getEmail());
+        
+        
     	
 //     	if ($sandbox != '1') {
 //     		// Adiciona a informação do CPF
