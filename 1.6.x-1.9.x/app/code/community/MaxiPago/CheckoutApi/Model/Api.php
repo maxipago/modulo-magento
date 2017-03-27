@@ -1,7 +1,4 @@
 <?php
-putenv('HTTP_PROXY=172.20.201.42:8080');
-putenv('HTTPS_PROXY=172.20.201.42:8080');
-
 /**
  * Magento
  *
