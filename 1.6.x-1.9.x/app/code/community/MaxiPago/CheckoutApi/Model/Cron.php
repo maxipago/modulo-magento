@@ -30,3 +30,4 @@ class MaxiPago_CheckoutApi_Model_Cron extends Varien_Event_Observer
     }
 
 }
+

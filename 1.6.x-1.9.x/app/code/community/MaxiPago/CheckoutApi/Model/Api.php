@@ -88,6 +88,7 @@ class MaxiPago_CheckoutApi_Model_Api
     		Mage::helper('checkoutapi')->log('URL de Request: ' . $url, 'maxipago.log');
     		$ch = curl_init($url);
     	}
+        
 
     	curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     	curl_setopt($ch, CURLOPT_POST, 1);
