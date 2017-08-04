@@ -21,7 +21,7 @@
 <config>
     <modules>
         <MaxiPago_CheckoutApi>
-            <version>1.0.6</version>
+            <version>1.0.8</version>            
         </MaxiPago_CheckoutApi>
     </modules>
     

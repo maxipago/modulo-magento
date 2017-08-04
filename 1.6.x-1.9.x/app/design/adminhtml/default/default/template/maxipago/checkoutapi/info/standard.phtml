@@ -45,7 +45,7 @@
             $tcIdPaymentMethod = array("DC","VI","MC","AM","ELO","DI","17","18","11","12","13","14","15","16");
             $tcIdPaymentMethodCreditCard = array("","2","3","4","5","15","16","18","19");
 
-            echo $tcTxtPaymentMethod[array_search($this->getInfo()->getData("cc_type"), $tcIdPaymentMethod)];;
+            echo "<strong>". $tcTxtPaymentMethod[array_search($this->getInfo()->getData("cc_type"), $tcIdPaymentMethod)]. "</strong>";
         }
     ?>
 
@@ -72,12 +72,26 @@
            target="_blank">Transferência Online</a>
 
     <?php elseif ($metodoPagamento == 'maxipagocheckoutapi_creditcard'): ?>
+        <br/>
+        
+        <!--Novos Fields-->
+        <br/> Auth Code: <?php echo $this->getInfo()->getMaxipagoAuthcode();?>
+        <br/> Order Id: <?php echo $this->getInfo()->getMaxipagoTokenTransaction();?>
+        <br/> Processor Transaction Id: <?php echo $this->getInfo()->getMaxipagoProcessorTransactionId();?>
+        <br/> Processor Reference Number: <?php echo $this->getInfo()->getMaxipagoProcessorReferenceNumber();?>
+        
         <br/> Nome no Cart&atilde;o: <?php echo $this->getInfo()->getCcOwner();?>
         <br/> Parcelas: <?php echo $this->getInfo()->getMaxipagoSplitNumber();?>
         <?php $price = Mage::helper('core')->currency($this->getInfo()->getMaxipagoSplitValue(), true, false); ?>
         <br/> Valor da Parcelas: <?php echo $price ?>
         <br/> &Uacute;ltimos 4 D&iacute;gitos do Cart&atilde;o: <?php echo $this->getInfo()->getCcLast4();?>
+        
     <?php endif; ?>
 
-    <br/> Pontua&ccedil;&atilde;o Antifraude: <?php echo $this->getInfo()->getMaxipagoFraudScore();?>
+    <?php 
+        $fraudScore = $this->getInfo()->getMaxipagoFraudScore();
+        if(isset($fraudScore)) : ?>
+            <br/> Pontua&ccedil;&atilde;o Antifraude: <?php echo $fraudScore;?>
+        <?php endif; ?>
+    
 </p>

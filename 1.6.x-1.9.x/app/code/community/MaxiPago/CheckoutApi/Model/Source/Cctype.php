@@ -33,59 +33,62 @@ class MaxiPago_CheckoutApi_Model_Source_Cctype
 		{
 			case 'VI':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '4', 'label' => 'Cielo'),
-					array('value' => '5', 'label' => 'e.Rede'),
-					array('value' => '6', 'label' => 'Elavon'),
-					array('value' => '3', 'label' => 'GetNet'),
-					array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '3', 'label' => 'GetNet'),
+                                    array('value' => '4', 'label' => 'Cielo'),
+                                    array('value' => '5', 'label' => 'e.Rede'),
+                                    array('value' => '6', 'label' => 'Elavon'),
+                                    array('value' => '9', 'label' => 'Stone'),					
 				);
 				break;
 			case 'MC':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '4', 'label' => 'Cielo'),
-					array('value' => '5', 'label' => 'e.Rede'),
-					array('value' => '6', 'label' => 'Elavon'),
-					array('value' => '3', 'label' => 'GetNet'),
-					array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '3', 'label' => 'GetNet'),
+                                    array('value' => '4', 'label' => 'Cielo'),
+                                    array('value' => '5', 'label' => 'e.Rede'),
+                                    array('value' => '6', 'label' => 'Elavon'),
+                                    array('value' => '9', 'label' => 'Stone'),					
 				);
 				break;
 			case 'AM':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '4', 'label' => 'Cielo'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '4', 'label' => 'Cielo'),
 				);
 				break;
 			case 'DC':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '4', 'label' => 'Cielo'),
-					array('value' => '5', 'label' => 'e.Rede'),
-					array('value' => '6', 'label' => 'Elavon'),
-					array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '4', 'label' => 'Cielo'),
+                                    array('value' => '5', 'label' => 'e.Rede'),
+                                    array('value' => '6', 'label' => 'Elavon'),
+					
 				);
 				break;
 			case 'EL':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '4', 'label' => 'Cielo'),
-					array('value' => '3', 'label' => 'GetNet'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '4', 'label' => 'Cielo'),				
 				);
 				break;
 			case 'DI':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '4', 'label' => 'Cielo'),
-					array('value' => '6', 'label' => 'Elavon'),
-					array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '4', 'label' => 'Cielo'),
+				    array('value' => '5', 'label' => 'e.Rede'),
+                                    array('value' => '6', 'label' => 'Elavon'),                                    
 				);
 				break;
 			case 'HC':
 				$processors = array(
-					array('value' => '1', 'label' => 'Simulador de Teste'),
-					array('value' => '5', 'label' => 'e.Rede'),
-					array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '1', 'label' => 'Simulador de Teste'),
+                                    array('value' => '2', 'label' => 'Redecard'),
+                                    array('value' => '5', 'label' => 'e.Rede'),	
 				);
 				break;
 			default:

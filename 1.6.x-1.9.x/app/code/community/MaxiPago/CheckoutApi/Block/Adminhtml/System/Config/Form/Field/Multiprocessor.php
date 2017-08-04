@@ -9,7 +9,7 @@ class MaxiPago_CheckoutApi_Block_Adminhtml_System_Config_Form_Field_Multiprocess
 	public function __construct()
     {
     	parent::__construct();
-    	$this->setTemplate('maxipago/checkoutapi/config/form/field/multiprocessor.phtml');
+    	$this->setTemplate('maxipago/checkoutapi/form/multiprocessor.phtml');
 	}
 	
 	public function getCcTypes()

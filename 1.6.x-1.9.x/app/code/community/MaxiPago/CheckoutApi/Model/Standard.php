@@ -294,6 +294,12 @@ class MaxiPago_CheckoutApi_Model_Standard extends Mage_Payment_Model_Method_Abst
     			
     			$payment->setData('maxipago_transaction_id', $txnId);
     			$payment->setData('maxipago_token_transaction', (string)$responseMP->orderID);
+                        
+                        //Novos campos
+                        $payment->setData('maxipago_authcode', (string)$responseMP->authCode);
+                        $payment->setData('maxipago_processor_transaction_id', (string)$responseMP->processorTransactionID);
+                        $payment->setData('maxipago_processor_reference_number', (string)$responseMP->processorReferenceNumber);
+                                                
     			$payment->setData('maxipago_url_payment', (isset($responseMP->onlineDebitUrl)) ? (string)$responseMP->onlineDebitUrl : (string)$responseMP->boletoUrl);
     			$payment->setData('maxipago_fraud_score', (string)$responseMP->fraudScore);
     			$payment->setData('maxipago_processor_type', $processor);

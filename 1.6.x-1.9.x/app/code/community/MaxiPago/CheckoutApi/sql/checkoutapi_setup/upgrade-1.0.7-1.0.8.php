@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Magento
  *
@@ -17,14 +18,25 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class MaxiPago_CheckoutApi_Model_Source_Chargeinterest
-{
-	public function toOptionArray()
-	{
-		return array(
-				//array('value' => '', 'label'=>Mage::helper('adminhtml')->__('Selecione...')),
-				array('value' => 'N', 'label'=>Mage::helper('adminhtml')->__('Padrão - Parcelamento Loja')),
-				array('value' => 'Y', 'label'=>Mage::helper('adminhtml')->__('Parcelamento Cartão')),
-		);
-	}
-}
+/** @var $installer Mage_Paypal_Model_Resource_Setup */
+$installer = $this;
+
+/**
+ * Prepare database for install
+ */
+
+$installer->startSetup();
+
+
+$installer->run("
+    ALTER TABLE  {$this->getTable('sales_flat_order_payment')} ADD  `maxipago_authcode` VARCHAR( 255 ) NULL DEFAULT NULL;
+    ALTER TABLE  {$this->getTable('sales_flat_order_payment')} ADD  `maxipago_processor_transaction_id` VARCHAR( 255 ) NULL DEFAULT NULL;
+    ALTER TABLE  {$this->getTable('sales_flat_order_payment')} ADD  `maxipago_processor_reference_number` VARCHAR( 255 ) NULL DEFAULT NULL;
+");
+/**
+ * Prepare database after install
+ */
+
+$installer->endSetup();
+
+

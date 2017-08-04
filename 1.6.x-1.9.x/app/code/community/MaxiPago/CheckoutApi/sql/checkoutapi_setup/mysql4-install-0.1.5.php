@@ -41,6 +41,7 @@ $installer->run("
     ALTER TABLE  {$this->getTable('sales_flat_order_payment')} ADD  `maxipago_token_transaction` VARCHAR( 255 ) NULL DEFAULT NULL;
     ALTER TABLE  {$this->getTable('sales_flat_order_payment')} ADD  `maxipago_url_payment` VARCHAR( 255 ) NULL DEFAULT NULL;
     ALTER TABLE  {$this->getTable('sales_flat_order_payment')} ADD  `maxipago_typeful_line` VARCHAR( 255 ) NULL DEFAULT NULL;
+        
 ");
 /**
  * Prepare database after install

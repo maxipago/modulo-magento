@@ -103,12 +103,11 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
                 	if ($order->getStatus() == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {     
                 		
                 		Mage::getSingleton('checkoutapi/processador')->autorizar($order, (string)$record->transactionID);
-                		if ($order->getPayment()->getData('maxipago_processor_type') != 'authM') {                                                                       
-                                        //Aprovo
-                			Mage::getSingleton('checkoutapi/processador')->aprovar($order, true, null);
-                                        
+                		if ($order->getPayment()->getData('maxipago_processor_type') != 'authM') {  
                                         //Captura
                                         Mage::getSingleton('checkoutapi/api')->capture($order, $order->getGrandTotal());
+                                        //Aprovo
+                			Mage::getSingleton('checkoutapi/processador')->aprovar($order, true, null);                                      
                 		}   
                 	}
                 	break;
