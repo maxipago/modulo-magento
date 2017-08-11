@@ -393,8 +393,8 @@ class MaxiPago_CheckoutApi_Model_Standard extends Mage_Payment_Model_Method_Abst
     						Mage::helper('core')->__('Autorização de %s.', round($amount, 2))
     						);
     				
-    				$mensagem = 'maxiPago! - Aguardando Pagamento.';
-    				$state  = Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW;
+    				$mensagem = 'maxiPago! - Pagamento Pendente.';
+    				$state  = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
     			}
     			
     			$order->setState($state, true, $mensagem, false);

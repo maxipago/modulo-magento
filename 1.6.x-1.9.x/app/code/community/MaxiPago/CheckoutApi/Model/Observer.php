@@ -100,6 +100,21 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
                     break;
                 case '44':
                     
+                        if ($order->getStatus() == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT) {     
+                		
+                		Mage::getSingleton('checkoutapi/processador')->autorizar($order, (string)$record->transactionID);
+                		if ($order->getPayment()->getData('maxipago_processor_type') != 'authM') {  
+                                        //Captura
+                                        Mage::getSingleton('checkoutapi/api')->capture($order, $order->getGrandTotal());
+                                        //Aprovo
+                			Mage::getSingleton('checkoutapi/processador')->aprovar($order, true, null);
+                                        
+                                        $frase = 'maxiPago! - Aguardando Pagamento. ' . $comment;
+                                        Mage::getSingleton('checkoutapi/processador')->enviarNotificacaoMudancaStatus($order, $frase, 'Pagamento Aprovado');
+                                        $order->save();
+                		}   
+                	} 
+                        
                 	if ($order->getStatus() == Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW) {     
                 		
                 		Mage::getSingleton('checkoutapi/processador')->autorizar($order, (string)$record->transactionID);
@@ -108,8 +123,13 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
                                         Mage::getSingleton('checkoutapi/api')->capture($order, $order->getGrandTotal());
                                         //Aprovo
                 			Mage::getSingleton('checkoutapi/processador')->aprovar($order, true, null);                                      
+                                        
+                                        $frase = 'maxiPago! - Aguardando Pagamento. ' . $comment;
+                                        Mage::getSingleton('checkoutapi/processador')->enviarNotificacaoMudancaStatus($order, $frase, 'Pagamento Aprovado');
+                                        $order->save();
                 		}   
                 	}
+                              
                 	break;
                 case '1':
                 case '4':
@@ -276,7 +296,7 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
     		}
     	}
     	elseif ($responseCode == 5) {
-    		$state = Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW;
+    		$state = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
     	}
     	
     	if ($state) {
@@ -286,20 +306,28 @@ class MaxiPago_CheckoutApi_Model_Observer extends Varien_Event_Observer
     	return $this;
     }
     
-    public function salesOrderPlaceAfter($observer) {
-    	
-    	$order = $observer->getEvent()->getOrder();
-    	$methodCode = $order->getPayment()->getMethodInstance()->getCode();
-    	
-    	if ($methodCode != 'maxipagocheckoutapi_creditcard') {
-    		return $this;
-    	}
-    	
-    	if ($order->getPayment()->getData('maxipago_processor_type') != 'authM')
-    	{
-    		Mage::getSingleton('checkoutapi/processador')->gerarFatura($order, $order->getPayment()->getTransactionId());
-    	}
-    	
-    	return $this;
+    public function salesOrderPlaceAfter($observer) {        
+     
+        $order = $observer->getEvent()->getOrder();
+        $methodCode = $order->getPayment()->getMethodInstance()->getCode();
+     
+        if ($methodCode != 'maxipagocheckoutapi_creditcard') {
+            return $this;
+        }             
+         
+        if ($order->getPayment()->getData('maxipago_processor_type') != 'authM')
+        {
+            if ($order->getPayment()->getData('maxipago_processor_type') == 'sale') 
+            {
+                Mage::getSingleton('checkoutapi/processador')->gerarFatura($order, $order->getPayment()->getTransactionId());
+            } else {
+                if(Mage::getStoreConfig('payment/maxipagocheckoutapi_creditcard/fraudCheck') != 1)      
+                {
+                    Mage::getSingleton('checkoutapi/processador')->gerarFatura($order, $order->getPayment()->getTransactionId());
+                }
+            }
+        }        
+       
+     return $this;
     }
 }

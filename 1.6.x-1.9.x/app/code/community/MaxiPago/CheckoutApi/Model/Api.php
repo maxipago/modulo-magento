@@ -89,7 +89,8 @@ class MaxiPago_CheckoutApi_Model_Api
     		$ch = curl_init($url);
     	}
         
-
+        //$proxy = '172.20.201.42:8080';
+        //curl_setopt($ch, CURLOPT_PROXY, $proxy);
     	curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     	curl_setopt($ch, CURLOPT_POST, 1);
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

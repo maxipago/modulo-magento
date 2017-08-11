@@ -34,11 +34,11 @@ class MaxiPago_CheckoutApi_Block_Info_Creditcard extends Mage_Payment_Block_Info
 		
             $hash = Mage::getModel('core/encryption')->encrypt($incrementid . ":" . $quoteid);
 			$method = $_order->getPayment()->getMethod();
-            switch ($method) {
-            	case 'maxipagocheckoutapi_creditcard':
-                        return '<span>Para efetuar o pagamento, <a href="' . Mage::getBaseUrl() . 'checkoutapi/standard/paymentbackend/order/' . $hash . '">clique aqui</a>.</span>';
-                    break;
-            }
+//            switch ($method) {
+//            	case 'maxipagocheckoutapi_creditcard':
+//                        return '<span>Para efetuar o pagamento, <a href="' . Mage::getBaseUrl() . 'checkoutapi/standard/paymentbackend/order/' . $hash . '">clique aqui</a>.</span>';
+//                    break;
+//            }
         }
     }
     
