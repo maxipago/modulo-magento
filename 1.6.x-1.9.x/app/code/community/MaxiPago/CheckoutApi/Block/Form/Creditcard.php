@@ -68,11 +68,20 @@ class MaxiPago_CheckoutApi_Block_Form_Creditcard extends Mage_Payment_Block_Form
 
         	$parcela = ceil(100 * $totalValue / $t) / 100;
         	
-        	if ($parcela < $mPValueSplit) break;
+                //Deixar pagar em uma parcela
+        	if ($parcela < $mPValueSplit) {
+                    
+                    $k = str_pad($t, 2, '0', STR_PAD_LEFT);
+                    $v = $t . 'x de ' . Mage::helper('checkoutapi')->toCurrencyString($parcela);
+                    $splitmP[$k] = $v;
+                    break;
+                    
+                } else {
         	
-        	$k = str_pad($t, 2, '0', STR_PAD_LEFT);
-        	$v = $t . 'x de ' . Mage::helper('checkoutapi')->toCurrencyString($parcela);
-        	$splitmP[$k] = $v;
+                    $k = str_pad($t, 2, '0', STR_PAD_LEFT);
+                    $v = $t . 'x de ' . Mage::helper('checkoutapi')->toCurrencyString($parcela);
+                    $splitmP[$k] = $v;
+                }
         }
 
         $this->setData('splitSimulate', $splitmP);
