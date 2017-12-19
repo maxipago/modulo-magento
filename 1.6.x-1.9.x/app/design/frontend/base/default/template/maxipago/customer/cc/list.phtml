@@ -1,0 +1,80 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @copyright   Copyright (c) 2006-2017 X.commerce, Inc. and affiliates (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/** @var MaxiPago_Payment_Block_Customer_Cc_List $this */
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+?>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<div class="page-title">
+    <h1><?php echo $this->__('My Saved Cards') ?></h1>
+</div>
+<?php if( $this->getCollection() && $this->count()): ?>
+    <?php echo $this->getToolbarHtml() ?>
+        <table class="data-table" id="my-reviews-table">
+            <col width="90" />
+            <col />
+            <col width="60"/>
+            <tbody>
+                <?php foreach ($this->getCollection() as $card): ?>
+                    <?php
+                    $brand = $helper->getBrand($card->getBrand());
+                    $slug = $helper->slugify($brand);
+                    ?>
+                    <tr class="<?php echo $slug;?>">
+                        <td>
+                            <span>
+                                <img src="<?php echo Mage::getBaseUrl('js'); ?>maxipago/cards/<?php echo $slug; ?>.svg"
+                                     alt="<?php echo $this->__($brand) ?>"
+                                     title="<?php echo $this->__($brand) ?>"
+                                />
+                            </span>
+
+                        </td>
+                        <td>
+                            <h2 class="product-name">
+                                <?php echo $this->escapeHtml($card->getDescription()) ?>
+                            </h2>
+                        </td>
+                        <td class="remove">
+                            <a href="<?php echo $this->getRemoveLink() ?>id/<?php echo $card->getId() ?>"
+                               onclick="if (!confirm('<?php echo $this->__('Are you sure you want to remove your saved card %s', $card->getDescription()); ?>')) return false;"
+                               class="nobr"
+                            >
+                                <?php echo $this->__('Remove Card'); ?>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <script type="text/javascript">decorateTable('my-reviews-table')</script>
+    <?php echo $this->getToolbarHtml() ?>
+<?php else: ?>
+    <p><?php echo $this->__('You have no saved cards.') ?></p>
+<?php endif; ?>
+<div class="buttons-set">
+    <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+</div>

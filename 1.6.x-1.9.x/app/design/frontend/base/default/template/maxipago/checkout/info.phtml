@@ -1,0 +1,8 @@
+<div class="pagto">
+    <div class="tit"><?php echo $this->__('Chosen payment method') ?></div>
+    <?php
+    $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+    $order = Mage::getModel('sales/order')->load($orderId);
+    echo $this->helper('payment')->getInfoBlock($order->getPayment())->toHtml()
+    ?>
+</div>

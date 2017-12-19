@@ -1,0 +1,117 @@
+/* Finalização - Pagamento */
+.maxipago-form label{
+    width: 150px;
+}
+#payment_form_maxipago_cc .validate-cc-cvn{
+    width: 100px;
+}
+#payment_form_maxipago_cc {
+    margin: 10px 0 20px;
+}
+#payment_form_maxipago_cc.maxipago-form {
+    position: relative;
+}
+#payment_form_maxipago_cc .save-card-button {
+    float: right;
+    right: 0;
+    position: absolute;
+    top: -5px;
+
+}
+#payment_form_maxipago_cc .save-card {
+
+}
+
+#payment_form_maxipago_cc input.maxipago_cc_type,
+#payment_form_maxipago_dc input.maxipago_dc_type {
+    display:none;
+}
+
+#payment_form_maxipago_eft .radio-flags,
+#payment_form_maxipago_cc .radio-flags,
+#payment_form_maxipago_dc .radio-flags{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    background:#fff;
+    border:1px solid #ccc;
+    border-radius:3px;
+    margin-bottom:20px;
+}
+
+#payment_form_maxipago_cc .radio-flags img,
+#payment_form_maxipago_dc .radio-flags img {
+    transition: 0.2s;
+    border-radius: 5px;
+    margin: 2px;
+    width: 60px;
+}
+#payment_form_maxipago_ticket .radio-flags img,
+#payment_form_maxipago_eft .radio-flags img{
+    width: 45px;
+    margin: 0 5px;
+}
+#payment_form_maxipago_cc .radio-flags .off,
+#payment_form_maxipago_dc .radio-flags .off {
+    filter: grayscale(100%);
+    border: none
+}
+#payment_form_maxipago_cc .radio-flags .on,
+#payment_form_maxipago_dc .radio-flags .on {
+    filter: grayscale(0%);
+    transition: 0.2s;
+    border: 2px solid #f66;
+}
+#payment_form_maxipago_cc .radio-flags .tit,
+#payment_form_maxipago_dc .radio-flags .tit {
+    padding:0 10px;
+    -webkit-align-self: center;
+    -ms-flex-item-align: center;
+    align-self: center;
+}
+#payment_form_maxipago_eft .radio-flags label,
+#payment_form_maxipago_cc .radio-flags label,
+#payment_form_maxipago_dc .radio-flags label {
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+    max-width:75px;
+    padding:5px;
+    background:#fff;
+    margin:0;
+    cursor:pointer;
+}
+#payment_form_maxipago_cc .radio-flags label:hover,
+#payment_form_maxipago_dc .radio-flags label:hover{
+    background:#eee
+}
+#payment_form_maxipago_cc .radio-flags input,
+#payment_form_maxipago_dc .radio-flags input {
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    margin-right:0;
+    top:0
+}
+#payment_form_maxipago_cc .radio-flags .ico,
+#payment_form_maxipago_dc .radio-flags .ico {
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    height:60px;
+    width:75px;
+}

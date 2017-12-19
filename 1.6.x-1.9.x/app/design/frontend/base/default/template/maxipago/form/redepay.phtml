@@ -1,0 +1,19 @@
+<?php
+/** @var MaxiPago_Payment_Block_Form_Redepay $this */
+$code = $this->getMethodCode();
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+
+$banks  = $helper->getBanksAvailable();
+$description = $helper->getConfig('description', $code);
+?>
+<fieldset class="form-list">
+    <div id="payment_form_<?php echo $code; ?>" class="case maxipago-form" style="display:none;">
+        <div class="card-entry">
+            <div class="recommendation">
+                <?php echo ($description) ? $description : $defaultDescription; ?>
+            </div>
+        </div>
+    </div>
+</fieldset>

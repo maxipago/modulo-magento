@@ -1,0 +1,306 @@
+<?php
+
+/**
+ * Bizcommerce Desenvolvimento de Plataformas Digitais Ltda - Epp
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category      maxiPago!
+ * @package       MaxiPago_Payment
+ * @copyright     Copyright (c) 2017
+ * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ */
+/** @var MaxiPago_Payment_Block_Form_Cc $this */
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+/** @var Mage_Core_Helper_Data $coreHelper */
+$coreHelper = $this->helper('core');
+$code = $this->getMethodCode();
+$isCurrentlySecure = Mage::app()->getStore()->isCurrentlySecure();
+
+$methods = $helper->getMethodsEnabled();
+/** @var Mage_Customer_Model_Session $customerSession */
+$customerSession = Mage::getSingleton('customer/session');
+$currentCustomer = $customerSession->getCustomer();
+
+$isRecurringProfile = $this->isRecurringProfile();
+$hasInstallments = $helper->getConfig('installments', $code);
+$installments = $helper->getInstallmentsInformation();
+/** @var Mage_Sales_Model_Quote $quote */
+$quote = $helper->getSession()->getQuote();
+$baseGrandTotal = $quote->getBaseGrandTotal();
+?>
+
+<fieldset class="form-list">
+    <div id="payment_form_<?php echo $code ?>" class="case maxipago-form" style="display:none;">
+        <div class="card-entry">
+            <div class="entry-title"><span><?php echo $this->__('Credit Card'); ?></span></div>
+            <?php if ($currentCustomer->getId() && !$isRecurringProfile) :
+                $_savedCards = $helper->getSavedCards($currentCustomer->getId());
+                if ($_savedCards->count() > 0) : ?>
+                    <div class="save-card-button">
+                        <a href="javascript:void(0)" id="useSavedCard">
+                            <?php echo $this->__('Use saved card') ?>
+                        </a>
+                    </div>
+                    <div class="save-card-button">
+                        <a href="javascript:void(0)"
+                           id="useNewCard"
+                           style="display:none">
+                            <?php echo $this->__('Use new card') ?>
+                        </a>
+                    </div>
+                    <div id="savedCards" class="input-box" style="display:none;">
+                        <div class="exp input-box">
+                            <h4><?php echo $this->__('Saved Cards') ?></h4>
+                            <div class="saved-card input-box">
+                                <label for="savedCard">
+                                    <?php echo $this->__('Card Number') ?>
+                                </label>
+                                <select name="payment[cc_token]" id="savedCard" >
+                                    <option value="0"><?php echo $this->__('Selecione...'); ?></option>
+                                    <?php foreach ($_savedCards as $card) : ?>
+                                        <option value="<?php echo $card->getId() ?>"
+                                                data-brand="<?php echo strtolower($card->getBrand()) ?>">
+                                            <?php echo $card->getDescription() . " (" . $helper->getBrand($card->getBrand()) . ")" ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <p><a href="javascript:void(0)" id="removeCard"><?php echo $this->__('Remover cartão selecionado'); ?></a></p>
+                            </div>
+                            <div class="cvv-token input-box">
+                                <label for="savedCard_cci"><?php echo $this->__('CVV') ?></label>
+                                <input type="text"
+                                       title="<?php echo $this->__('CVV') ?>"
+                                       class="input-text cvv validate-cc-cvn"
+                                       id="savedCard_cci"
+                                       name="payment[cc_cid_sc]"/>
+
+                                <a href="javascript:void(0)" class="cvv-what-is-this oqe">
+                                    <span><?php echo $this->__('What is this?') ?></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                <?php endif; //savedCards
+            endif; //currentCustomer ?>
+
+            <div class="cartaoform">
+                <div class="input-box radio-flags">
+                    <input type="hidden" name="payment[use_saved_card]" id="maxipagoUseSavedCard" value="0"/>
+                    <div class="tit"><?php echo $this->__('Selecione:'); ?></div>
+                    <?php foreach ($methods as $method) : ?>
+                        <?php $slug = $method['slug']; ?>
+                        <label>
+                            <input type="radio"
+                                   name="payment[cc_type]"
+                                   class="maxipago_cc_type validate-one-required-by-name"
+                                   title="<?php echo $method['label']; ?>"
+                                   value="<?php echo $method['value'] ?>"/>
+
+                            <img src="<?php echo Mage::getBaseUrl('js'); ?>maxipago/cards/<?php echo $slug; ?>.svg"
+                                 alt="<?php echo $this->__($method['label']) ?>"
+                                 title="<?php echo $this->__($method['label']) ?>"
+                            />
+                        </label>
+                    <?php endforeach; ?>
+
+                </div> <!-- radio-flags -->
+
+                <div class="cardGrid" id="cardGridMaxiPago">
+
+                    <div id="divcardnumber" class="num input-box">
+                        <label class="required">
+                            <em>*</em><?php echo $this->__('Card Number') ?>
+                        </label>
+                        <input type="text" placeholder="Digite apenas números" id="<?php echo $code ?>_number"
+                               name="payment[cc_number]" title="<?php echo $this->__('Número do cartão') ?>"
+                               class="input-text validate-cc-number validate-cc-type required-entry"
+                               value="<?php echo $this->getInfoData('cc_number') ?>"/>
+
+                        <?php if ($helper->getConfig('cc_can_save', $code) && !$isRecurringProfile): ?>
+                            <label for="ckSaveCard">
+                                <input type="checkbox" name="payment[save_card]" id="ckSaveCard"/>
+                                <?php echo $this->__('Save this card?') ?>
+                            </label>
+                        <?php endif; ?>
+
+                    </div>
+                    <div id="divcardname" class="nome input-box">
+                        <label for="<?php echo $code ?>_owner" class="required">
+                            <em>*</em><?php echo $this->__('Nome do titular') ?>
+                        </label>
+                        <input type="text" placeholder="Exatamente como no cartão"
+                               title="<?php echo $this->__('Nome do titular') ?>" class="required-entry input-text"
+                               id="<?php echo $code ?>_owner" name="payment[cc_owner]"
+                               value="<?php echo $this->getInfoData('cc_owner') ?>"/>
+                    </div>
+                    <div id="divexpiration" class="exp input-box">
+                        <label for="<?php echo $code ?>_expiration"
+                               class="required">
+                            <em>*</em><?php echo $this->__('Data de validade') ?>
+                        </label>
+                        <span class="mes">
+                            <select id="<?php echo $code ?>_expiration" name="payment[cc_exp_month]"
+                                    class="month validate-cc-exp required-entry">
+                                <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
+                                <?php foreach ($this->getCcMonths() as $k => $v): ?>
+                                    <?php
+                                    $selected = ($k == $_ccExpMonth) ? 'selected="selected"' : null;
+                                    $value = is_numeric($k) ? $k + 1 : null;
+                                    ?>
+                                    <option value="<?php echo $value ?>" <?php echo $selected; ?>>
+                                        <?php echo $v ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </span>
+                        <span class="ano">
+                            <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
+                            <select id="<?php echo $code ?>_expiration_yr"
+                                    style="width:103px;"
+                                    name="payment[cc_exp_year]" class="year required-entry">
+                                <?php foreach ($this->getCcYears() as $k => $v): ?>
+                                    <?php
+                                    $selected = ($v == $_ccExpYear) ? 'selected="selected"' : null;
+                                    $value = ((int)$v) > 0 ? (int)$v : null;
+                                    ?>
+                                    <option value="<?php echo $value ?>" <?php echo $selected; ?>>
+                                        <?php echo $v ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </span>
+                    </div>
+                    <div id="divcvv" class="input-box">
+                        <label for="<?php echo $code ?>_cid" class="required">
+                            <em>*</em><?php echo $this->__('CVV') ?>
+                        </label>
+                        <input type="text"
+                               title="<?php echo $this->__('CVV') ?>"
+                               class="required-entry input-text cvv validate-cc-cvn"
+                               id="<?php echo $code ?>_cid"
+                               name="payment[cc_cid]"/>
+                        <a href="javascript:void(0)" class="cvv-what-is-this oqe">
+                            <span><?php echo $this->__('What is this?') ?></span>
+                        </a>
+                    </div>
+
+                </div> <!-- cardGrid -->
+
+            </div> <!-- cartaoform -->
+
+            <?php if ($helper->getConfig('show_taxvat_field')): ?>
+                <div id="divcardcpf" class="cpf-input input-box">
+                    <label class="required">
+                        <em>*</em> <?php echo $this->__('CPF/CNPJ do titular'); ?>
+                    </label>
+                    <input type="text"
+                           placeholder="<?php echo $this->__('Digite apenas números'); ?>"
+                           id="<?php echo $code ?>_cpf"
+                           class="required-entry input-text"
+                           maxlength="14"
+                           name="payment[cpf_cnpj]"
+                           title="<?php echo $this->__('CPF / CNPJ'); ?>"
+                           value="<?php echo $this->getInfoData('cpf_cnpj') ?>"/>
+                </div>
+            <?php endif;?>
+
+            <input type="hidden" name="payment[base_grand_total]" value="<?php echo $baseGrandTotal; ?>" />
+            <?php if ($isRecurringProfile || !$hasInstallments): ?>
+                <input type="hidden" name="payment[installments]" value="1" />
+                <input type="hidden" name="payment[recurring_profile]" value="1" />
+            <?php else: ?>
+                <div class="pars input-box">
+                    <label for="maxipago_installments" class="required">
+                        <em>*</em><?php echo $this->__('Número de parcelas') ?>
+                    </label>
+                    <select name="payment[installments]"
+                            id="maxipago_installments"
+                            class="required-entry parcelas">
+                        <option value=""><?php echo $this->__('Selecione...'); ?></option>
+                        <?php foreach ($installments as $installment): ?>
+                            <?php
+                            $total = $coreHelper->currency($installment['total'], true, false);
+                            $interest = $installment['interest_rate'];
+                            $i = $installment['installments'];
+                            ?>
+                            <option value="<?php echo $i; ?>">
+                                <?php echo $i; ?>x
+                                <?php echo $this->__('de'); ?>
+                                <?php echo $coreHelper->currency($installment['value'], true, false); ?>
+                                <?php if ($interest): ?>
+                                    <?php echo $this->__('(Total de %s, juros de %s&percnt; a.m.)', $total, $interest); ?>
+                                <?php else: ?>
+                                    <?php echo $this->__('(sem juros)'); ?>
+                                <?php endif; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
+
+        </div> <!-- card-entry -->
+
+    </div> <!-- case -->
+</fieldset>
+<script type="text/javascript">
+    $j('#useSavedCard').click(function () {
+        $j(this).css('display', 'none');
+        $j('.cartaoform').css('display', 'none');
+        $j('#savedCards').css('display', 'block');
+        $j('#useNewCard').css('display', 'block');
+        $j('#maxipagoUseSavedCard').val(1);
+    });
+
+    $j('#useNewCard').click(function () {
+        $j(this).css('display', 'none');
+        $j('.cartaoform').css('display', 'block');
+        $j('#savedCards').css('display', 'none');
+        $j('#useSavedCard').css('display', 'block');
+        $j('#maxipagoUseSavedCard').val(0);
+    });
+
+    <?php if ($currentCustomer->getId()): ?>
+    $j('a#removeCard').click(function () {
+        var confirmMessage = '<?php echo $this->__('Tem certeza que deseja remover o cartão selecionado?'); ?>';
+        var url = '<?php echo Mage::getUrl('maxipago/card/removeCard/', array('_secure' => $isCurrentlySecure)) ?>';
+        var customerId = '<?php echo $currentCustomer->getId() ?>';
+        maxipago.removeCard(url, customerId, confirmMessage);
+    });
+    <?php endif;?>
+
+    $j('#payment_form_<?php echo $code ?> input.maxipago_cc_type').click(function(){
+        $j('#payment_form_<?php echo $code ?> input.maxipago_cc_type').parent().find('img').removeClass('on');
+        $j('#payment_form_<?php echo $code ?> input.maxipago_cc_type').parent().find('img').addClass('off');
+
+        $j(this).parent().find('img').removeClass('off');
+        $j(this).parent().find('img').addClass('on');
+    });
+    $j('#payment_form_<?php echo $code ?> #<?php echo $code ?>_number').change(function(){
+        var ccType = maxipago.identifyCcNumber($j(this).val());
+        $j('#payment_form_<?php echo $code ?> input.maxipago_cc_type').each(function(){
+            if ($j(this).val() == ccType) {
+                $j(this).click();
+            }
+        });
+    });
+
+    var maxiPagoCcType = maxipago.identifyCcNumber($j('#payment_form_<?php echo $code ?> #<?php echo $code ?>_number').val());
+    $j('#payment_form_<?php echo $code ?> input.maxipago_cc_type').each(function(){
+        if ($j(this).val() == maxiPagoCcType) {
+            $j(this).click();
+        }
+    });
+</script>

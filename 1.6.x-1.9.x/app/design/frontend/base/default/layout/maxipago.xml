@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to atendimento@saffira.com.br so we can send you a copy immediately.
+ *
+ * @category   Saffira / maxiPago
+ * @package    MaxiPago_CheckoutApi
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<layout version="1.0.2">
+
+    <default>
+        <reference name="head">
+            <action method="addJs"><script>lib/jquery/jquery-1.12.0.min.js</script></action>
+            <action method="addJs"><script>lib/jquery/noconflict.js</script></action>
+            <action method="addJs"><script>maxipago/payment.js</script></action>
+            <action method="addItem"><type>js_css</type><script>maxipago/payment.css</script></action>
+        </reference>
+    </default>
+
+    <customer_account>
+        <!-- Mage_Wishlist -->
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="maxipago" ifconfig="payment/maxipago_cc/cc_can_save">
+                <name>maxipago</name>
+                <path>maxipago/cc</path>
+                <label>My Saved Cards</label>
+            </action>
+        </reference>
+    </customer_account>
+
+    <maxipago_cc_index translate="label">
+        <label>maxiPago! - My Saved Cards</label>
+        <update handle="customer_account"/>
+        <reference name="my.account.wrapper">
+            <block type="maxipago/customer_cc_list" name="maxipago_customer_cc_list" template="maxipago/customer/cc/list.phtml"/>
+        </reference>
+    </maxipago_cc_index>
+
+    <maxipago_cc_edit translate="label">
+        <label>maxiPago! - My Saved Cards - Edit</label>
+        <update handle="customer_account"/>
+        <reference name="my.account.wrapper">
+            <block type="review/customer_cc_edit" name="maxipago_customer_cc_edit"/>
+        </reference>
+    </maxipago_cc_edit>
+
+    <checkout_onepage_success>
+        <reference name="checkout.success">
+            <block type="core/template" name="checkout.success.info">
+                <action method="setTemplate" ifconfig="payment/maxipago_settings/show_payment_info">
+                    <template>maxipago/checkout/info.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_success>
+</layout>

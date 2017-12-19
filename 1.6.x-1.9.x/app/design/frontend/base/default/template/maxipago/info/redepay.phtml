@@ -1,0 +1,22 @@
+<?php
+/** @var MaxiPago_Payment_Block_Info_Redepay $this */
+/** @var Mage_Payment_Model_Info $info */
+$info = $this->getInfo();
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+
+$tid = $info->getAdditionalInformation('processor_transaction_id');
+$nsu = $info->getAdditionalInformation('processor_reference_number');
+?>
+<div class="box-content">
+    <p><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></p>
+
+    <?php if($tid): ?>
+        <p><?php echo $this->__('TID: %s', $tid) ?></p>
+    <?php endif; ?>
+
+    <?php if($nsu): ?>
+        <p><?php echo $this->__('NSU: %s', $nsu) ?></p>
+    <?php endif; ?>
+</div>

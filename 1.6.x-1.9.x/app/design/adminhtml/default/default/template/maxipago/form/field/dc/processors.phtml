@@ -1,0 +1,295 @@
+<?php
+/** @var MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Dc_Processors $this */
+
+$_htmlId = $this->getHtmlId() ? $this->getHtmlId() : '_' . uniqid();
+
+$_colspan = 2;
+if (!$this->_addAfter) {
+	$_colspan -= 1;
+}
+$_colspan = $_colspan > 1 ? 'colspan="' . $_colspan . '"' : '';
+
+$_dcTypes = $this->getDcTypes();
+$_processors = $this->getProcessors();
+$_dcTypeProcessors = $this->getDcTypeProcessors();
+?>
+
+<div class="grid" id="grid<?php echo $_htmlId ?>">
+    <table id="table<?php echo $_htmlId ?>" cellpadding="0" cellspacing="0" class="border">
+        <tbody>
+            <tr class="headings" id="headings<?php echo $_htmlId ?>">
+<?php foreach ($this->_columns as $columnName => $column):?>
+                <th><?php echo $column['label'] ?></th>
+<?php endforeach;?>
+                <th <?php echo $_colspan?>></th>
+            </tr>
+            <tr id="addRow<?php echo $_htmlId ?>">
+                <td colspan="<?php echo count($this->_columns) ?>"></td>
+                <td <?php echo $_colspan?>>
+                    <button style="" onclick="" class="scalable add" type="button" id="addToEndBtn<?php echo $_htmlId ?>">
+                        <span><span><span><?php echo $this->_addButtonLabel ?></span></span></span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="hidden" name="<?php echo $this->getElement()->getName() ?>[__empty]" value="" />
+</div>
+<div id="empty<?php echo $_htmlId ?>">
+    <button style="" onclick="" class="scalable add" type="button" id="emptyAddBtn<?php echo $_htmlId ?>">
+        <span><span><span><?php echo $this->_addButtonLabel ?></span></span></span>
+    </button>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+
+var dcTypes = <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_dcTypes)) ?>;
+var dcTypeIds = [];
+
+for(var i = 0; i < dcTypes.length; i++) {
+	dcTypeIds.push(dcTypes[i].value);
+}
+
+// create row creator
+var arrayRow<?php echo $_htmlId ?> = {
+    // define row prototypeJS template
+    template : new Template(
+        '<tr id="#{_id}" class="row">'
+<?php foreach ($this->_columns as $columnName => $column):?>
+            +'<td class="<?php echo $columnName ?>">'
+                +'<?php echo Mage::helper('core')->jsQuoteEscape($this->_renderCellTemplate($columnName)) ?>'
+            +'<\/td>'
+<?php endforeach;?>
+<?php if ($this->_addAfter):?>
+            +'<td><button onclick="" class="scalable add" type="button" id="addAfterBtn#{_id}"><span><span><span><?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('adminhtml')->__('Add after')) ?><\/span><\/span><\/span><\/button><\/td>'
+<?php endif;?>
+            +'<td><button onclick="arrayRow<?php echo $_htmlId ?>.del(\'#{_id}\')" class="scalable delete" type="button"><span><span><span><?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('adminhtml')->__('Delete')) ?><\/span><\/span><\/span><\/button><\/td>'
+        +'<\/tr>'
+    ),
+    rowsCount : 0,
+    selects : [],
+    dcTypes : <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_dcTypes)) ?>,
+    dcTypeProcessors : <?php echo Mage::helper('core')->jsQuoteEscape(json_encode($_dcTypeProcessors)) ?>,
+    selectedDcTypes : [],
+    addTemplate : function(templateData, insertAfterId)
+    {
+    	// generate default template data
+        if (templateData == '') {
+            var d = new Date();
+            var templateData = {
+<?php foreach ($this->_columns as $columnName => $column):?>
+                <?php echo $columnName ?> : '',
+<?php endforeach;?>
+                _id : '_' + d.getTime() + '_' + d.getMilliseconds()
+            };
+        }
+
+        // insert before last row
+        if ('' == insertAfterId) {
+            Element.insert($('addRow<?php echo $_htmlId ?>'), {before: this.template.evaluate(templateData)});
+        }
+        // insert after specified row
+        else {
+            Element.insert($(insertAfterId), {after: this.template.evaluate(templateData)});
+        }
+
+<?php if ($this->_addAfter):?>
+        Event.observe('addAfterBtn' + templateData._id, 'click', this.add.bind(this, '', templateData._id));
+<?php endif;?>
+
+        this.rowsCount += 1;
+
+        return templateData._id;
+    },
+
+    add : function(templateData, insertAfterId)
+    {
+    	this.addTemplate(templateData, insertAfterId);
+
+        this.updateSelects();
+        this.updateSelectedDcTypes(this.selectedDcTypes.length - 1);
+
+        var newSelectDcType = this.selects[this.selects.length - 1];
+        var value = newSelectDcType.value;
+        this.reloadDcType(newSelectDcType);
+        newSelectDcType.value = value;
+        this.reloadProcessor(newSelectDcType);
+        this.selectedDcTypes.push(newSelectDcType.value);
+
+        for (var i = 0; i < this.selects.length - 1; i++) {
+        	this.removeDcType(this.selects[i], newSelectDcType.value);
+        }
+
+		var self = this;
+        newSelectDcType.observe('change', function() {
+        	self.reloadProcessor(newSelectDcType);
+        });
+
+        this.toggleAddToEndBtn();
+
+    },
+
+    addNew: function(templateData, insertAfterId)
+    {
+        this.addTemplate(templateData, insertAfterId);
+
+        this.updateSelects();
+        this.updateSelectedDcTypes(this.selectedDcTypes.length - 1);
+
+        var newSelectDcType = this.selects[this.selects.length - 1];
+        this.reloadDcType(newSelectDcType);
+        this.reloadProcessor(newSelectDcType);
+        this.selectedDcTypes.push(newSelectDcType.value);
+
+        for (var i = 0; i < this.selects.length - 1; i++) {
+        	this.removeDcType(this.selects[i], newSelectDcType.value);
+        }
+
+        var self = this;
+        newSelectDcType.observe('change', function() {
+        	self.reloadProcessor(newSelectDcType);
+        });
+
+        this.toggleAddToEndBtn();
+    },
+
+    del : function(rowId)
+    {
+        $(rowId).remove();
+        this.rowsCount -= 1;
+        if (0 == this.rowsCount) {
+            this.showButtonOnly();
+        }
+
+        this.updateSelects();
+        this.updateSelectedDcTypes();
+
+        for (var i = 0; i < this.selects.length; i++) {
+            this.reloadDcType(this.selects[i], true);
+            this.selects[i].value = this.selectedDcTypes[i];
+        }
+
+        this.toggleAddToEndBtn();
+    },
+
+    showButtonOnly : function()
+    {
+        $('grid<?php echo $_htmlId ?>').hide();
+        $('empty<?php echo $_htmlId ?>').show();
+    },
+
+    updateSelects : function ()
+    {
+    	this.selects = $$('#table<?php echo $_htmlId ?> td.dc_type select');
+    },
+
+    updateSelectedDcTypes : function (endIndex = null) {
+    	this.selectedDcTypes = [];
+
+    	if (endIndex == null) {
+    		endIndex = this.selects.length - 1;
+    	}
+
+    	for (var i = 0; i <= endIndex; i++) {
+    		this.selectedDcTypes.push(this.selects[i].value);
+    	}
+    },
+
+    reloadDcType : function (selectDcType, mantainSelectedValue = false) {
+    	var value = selectDcType.value;
+    	selectDcType.update();
+
+    	for (var i = 0; i < this.dcTypes.length; i++) {
+    		if ((mantainSelectedValue && value == this.dcTypes[i].value)
+    	    	|| this.selectedDcTypes.indexOf(this.dcTypes[i].value) == -1) {
+    			var option = document.createElement('option');
+    			option.value = this.dcTypes[i].value;
+    			option.innerHTML = this.dcTypes[i].label;
+    			selectDcType.options.add(option);
+    		}
+    	}
+    },
+
+    removeDcType : function (selectDcType, dcType) {
+		for (var i = 0; i < selectDcType.options.length; i++) {
+    		if (selectDcType.options[i].value == dcType) {
+    			selectDcType.remove(i);
+    			break;
+    		}
+    	}
+    },
+
+    reloadProcessor : function (selectDcType) {
+    	var dcType = selectDcType.value;
+    	var selectProcessor = $(selectDcType).up('tr').down('td.processor select');
+
+    	for (var i = 0; i < this.dcTypeProcessors.length; i++) {
+    		if (this.dcTypeProcessors[i].dcType == dcType) {
+    			var value = selectProcessor.value;
+    			var processors = [];
+    			selectProcessor.update();
+
+    			for (var j = 0; j < this.dcTypeProcessors[i].processors.length; j++) {
+    				var option = document.createElement('option');
+    				option.value = this.dcTypeProcessors[i].processors[j].value;
+    				option.innerHTML = this.dcTypeProcessors[i].processors[j].label;
+    				selectProcessor.options.add(option);
+
+    				processors.push(option.value);
+    			}
+
+    			if (processors.indexOf(value) != -1) {
+    				selectProcessor.value = value;
+    			}
+    			else {
+    				selectProcessor.options[0].selected = true;
+    			}
+    		}
+    	}
+    },
+
+    toggleAddToEndBtn : function () {
+    	if (this.selectedDcTypes.length < this.dcTypes.length) {
+    		$('addToEndBtn<?php echo $_htmlId ?>').show();
+    	}
+    	else {
+    		$('addToEndBtn<?php echo $_htmlId ?>').hide();
+    	}
+    }
+};
+
+// bind add action to "Add" button in last row
+Event.observe('addToEndBtn<?php echo $_htmlId ?>', 'click', arrayRow<?php echo $_htmlId ?>.addNew.bind(arrayRow<?php echo $_htmlId ?>, '', ''));
+
+// add existing rows
+<?php
+$_addAfterId = "headings{$_htmlId}";
+foreach ($this->getArrayRows() as $_rowId => $_row) {
+    echo "arrayRow{$_htmlId}.add(" . $_row->toJson() . ", '{$_addAfterId}');\n";
+    $_addAfterId = $_rowId;
+}
+?>
+
+// update selects values
+// updateAllDcTypes();
+
+// initialize standalone button
+$('empty<?php echo $_htmlId ?>').hide();
+Event.observe('emptyAddBtn<?php echo $_htmlId ?>', 'click', function () {
+    $('grid<?php echo $_htmlId ?>').show();
+    $('empty<?php echo $_htmlId ?>').hide();
+    arrayRow<?php echo $_htmlId ?>.addNew('', '');
+});
+
+// if no rows, hide grid and show button only
+<?php if (!$this->getArrayRows()):?>
+arrayRow<?php echo $_htmlId ?>.showButtonOnly();
+<?php endif;?>
+
+// toggle the grid, if element is disabled (depending on scope)
+<?php if ($this->getElement()->getDisabled()):?>
+toggleValueElements({checked:true}, $('grid<?php echo $_htmlId ?>').parentNode);
+<?php endif;?>
+
+</script>
