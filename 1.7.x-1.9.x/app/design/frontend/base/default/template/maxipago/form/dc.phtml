@@ -1,0 +1,151 @@
+<?php
+/** @var MaxiPago_Payment_Block_Form_Dc $this */
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+
+$code = $this->getMethodCode();
+$isCurrentlySecure = Mage::app()->getStore()->isCurrentlySecure();
+
+$methods = $helper->getMethodsEnabled('maxipago_dc');
+?>
+
+<fieldset class="form-list">
+    <div id="payment_form_<?php echo $code ?>" class="case maxipago-form" style="display:none;">
+        <div class="card-entry">
+            <div class="entry-title"><span><?php echo $this->__('Cartão de Débito'); ?></span></div>
+
+            <div class="cartaoform">
+                <div class="input-box radio-flags">
+                    <div class="tit"><?php echo $this->__('Selecione:'); ?></div>
+                    <?php foreach ($methods as $method) : ?>
+                        <?php $slug = $method['slug']; ?>
+                        <label>
+                            <input type="radio"
+                                   name="payment[dc_type]"
+                                   class="maxipago_dc_type validate-one-required-by-name"
+                                   title="<?php echo $method['label']; ?>"
+                                   value="<?php echo $method['value'] ?>"/>
+
+                            <img src="<?php echo Mage::getBaseUrl('js'); ?>maxipago/cards/<?php echo $slug; ?>.svg"
+                                 alt="<?php echo $this->__($method['label']) ?>"
+                                 title="<?php echo $this->__($method['label']) ?>"
+                            />
+                        </label>
+                    <?php endforeach; ?>
+
+                </div> <!-- radio-flags -->
+
+                <div class="cardGrid" id="cardGridMaxiPago">
+
+                    <div id="divcardnumber" class="num input-box">
+                        <label class="required">
+                            <em>*</em><?php echo $this->__('Card Number') ?>
+                        </label>
+                        <input type="text" placeholder="Digite apenas números" id="<?php echo $code ?>_number"
+                               name="payment[dc_number]" title="<?php echo $this->__('Número do cartão') ?>"
+                               class="input-text validate-cc-number validate-cc-type required-entry"
+                               value="<?php echo $this->getInfoData('dc_number') ?>"/>
+
+                    </div>
+                    <div id="divcardname" class="nome input-box">
+                        <label for="<?php echo $code ?>_owner" class="required">
+                            <em>*</em><?php echo $this->__('Nome do titular') ?>
+                        </label>
+                        <input type="text" placeholder="Exatamente como no cartão"
+                               title="<?php echo $this->__('Nome do titular') ?>" class="required-entry input-text"
+                               id="<?php echo $code ?>_owner" name="payment[dc_owner]"
+                               value="<?php echo $this->getInfoData('dc_owner') ?>"/>
+                    </div>
+                    <div id="divexpiration" class="exp input-box">
+                        <label for="<?php echo $code ?>_expiration"
+                               class="required">
+                            <em>*</em><?php echo $this->__('Data de validade') ?>
+                        </label>
+                        <span class="mes">
+                            <select id="<?php echo $code ?>_expiration" name="payment[dc_exp_month]"
+                                    class="month validate-cc-exp required-entry">
+                                <?php $_dcExpMonth = $this->getInfoData('dc_exp_month') ?>
+                                <?php foreach ($this->getCcMonths() as $k => $v): ?>
+                                    <?php
+                                    $selected = ($k == $_dcExpMonth) ? 'selected="selected"' : null;
+                                    $value = is_numeric($k) ? $k + 1 : null;
+                                    ?>
+                                    <option value="<?php echo $value ?>" <?php echo $selected; ?>>
+                                        <?php echo $v ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </span>
+                        <span class="ano">
+                            <?php $_dcExpYear = $this->getInfoData('dc_exp_year') ?>
+                            <select id="<?php echo $code ?>_expiration_yr"
+                                    style="width:103px;"
+                                    name="payment[dc_exp_year]" class="year required-entry">
+                                <?php foreach ($this->getCcYears() as $k => $v): ?>
+                                    <?php
+                                    $selected = ($v == $_dcExpYear) ? 'selected="selected"' : null;
+                                    $value = ((int)$v) > 0 ? (int)$v : null;
+                                    ?>
+                                    <option value="<?php echo $value ?>" <?php echo $selected; ?>>
+                                        <?php echo $v ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </span>
+                    </div>
+                    <div id="divcvv" class="input-box">
+                        <label for="<?php echo $code ?>_cid" class="required">
+                            <em>*</em><?php echo $this->__('CVV') ?>
+                        </label>
+                        <input type="text"
+                               title="<?php echo $this->__('CVV') ?>"
+                               class="required-entry input-text cvv validate-cc-cvn"
+                               id="<?php echo $code ?>_cid"
+                               name="payment[dc_cid]"/>
+                        <a href="javascript:void(0)" class="cvv-what-is-this oqe">
+                            <span><?php echo $this->__('What is this?') ?></span>
+                        </a>
+                    </div>
+                    <?php if ($helper->getConfig('show_taxvat_field')): ?>
+                        <div id="divcardcpf" class="cpf-input input-box">
+                            <label class="required">
+                                <em>*</em> <?php echo $this->__('CPF/CNPJ do titular'); ?>
+                            </label>
+                            <input type="text"
+                                   placeholder="<?php echo $this->__('Digite apenas números'); ?>"
+                                   id="<?php echo $code ?>_cpf"
+                                   class="required-entry input-text"
+                                   maxlength="14"
+                                   name="payment[cpf_cnpj]"
+                                   title="<?php echo $this->__('CPF / CNPJ'); ?>"
+                                   value="<?php echo $this->getInfoData('cpf_cnpj') ?>"/>
+                        </div>
+                    <?php endif;?>
+                </div> <!-- cardGrid -->
+
+            </div> <!-- cartaoform -->
+
+
+        </div> <!-- card-entry -->
+
+    </div> <!-- case -->
+</fieldset>
+<script type="text/javascript">
+
+    $j('#payment_form_<?php echo $code ?> input.maxipago_dc_type').click(function(){
+        $j('#payment_form_<?php echo $code ?> input.<?php echo $code ?>_type').parent().find('img').removeClass('on');
+        $j('#payment_form_<?php echo $code ?> input.<?php echo $code ?>_type').parent().find('img').addClass('off');
+
+        $j(this).parent().find('img').removeClass('off');
+        $j(this).parent().find('img').addClass('on');
+    });
+    $j('#payment_form_<?php echo $code ?> #<?php echo $code ?>_number').change(function(){
+        var dcType = maxipago.identifyCcNumber($j(this).val());
+        $j('#payment_form_<?php echo $code ?> input.<?php echo $code ?>_type').each(function(){
+            if ($j(this).val() == dcType) {
+                $j(this).click();
+            }
+        });
+    });
+</script>

@@ -1,0 +1,134 @@
+<?php
+/** @var MaxiPago_Payment_Block_Form_Cc $this */
+$code = $this->getMethodCode();
+$isCurrentlySecure = Mage::app()->getStore()->isCurrentlySecure();
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+/** @var Mage_Core_Helper_Data $coreHelper */
+$coreHelper = $this->helper('core');
+
+$description = $helper->getConfig('description', $code);
+$defaultDescription = $this->__('<small>Pay with Checkout 2.0</small>');
+
+$hasInstallments = $helper->getConfig('installments', $code);
+$installments = $helper->getInstallmentsInformation($code);
+
+/** @var Mage_Sales_Model_Quote $quote */
+$quote = $helper->getSession()->getQuote();
+$baseGrandTotal = $quote->getBaseGrandTotal();
+?>
+
+<div id="payment_form_<?php echo $code; ?>" class="case maxipago-form" style="display:none;">
+    <fieldset>
+        <div class="checkout2Grid input-box">
+            <?php echo ($description) ? $description : $defaultDescription; ?>
+        </div>
+
+        <div id="<?php echo $code; ?>_description" class="input-box">
+            <label class="required">
+                <em>*</em><?php echo $this->__('Description that will appear at the e-mail') ?>
+            </label>
+            <input type="text"
+                   id="<?php echo $code ?>_description"
+                   name="payment[description]"
+                   title="<?php echo $this->__('Description') ?>"
+                   class="input-text required-entry"
+                   value="<?php echo $this->getInfoData('description') ?>"
+            />
+        </div>
+
+        <div id="<?php echo $code; ?>_comments" class="input-box">
+            <label class="required">
+                <em>*</em><?php echo $this->__('Comments that will appear at the e-mail') ?>
+            </label>
+            <input type="text"
+                   id="<?php echo $code ?>_comments"
+                   name="payment[comments]"
+                   title="<?php echo $this->__('Comments') ?>"
+                   class="input-text required-entry"
+                   value="<?php echo $this->getInfoData('comments') ?>"
+            />
+        </div>
+
+        <div id="<?php echo $code; ?>_subject" class="input-box">
+            <label class="required">
+                <em>*</em><?php echo $this->__('Subject of the e-mail') ?>
+            </label>
+            <input type="text"
+                   id="<?php echo $code ?>_subject"
+                   name="payment[subject]"
+                   title="<?php echo $this->__('Subject') ?>"
+                   class="input-text required-entry"
+                   value="<?php echo $this->getInfoData('subject') ?>"
+            />
+        </div>
+
+        <?php if (!$quote->getCustomerDob()): ?>
+            <div id="<?php echo $code; ?>_dob" class="input-box">
+                <label class="required">
+                    <em>*</em><?php echo $this->__('Date of Birth') ?>
+                </label>
+                <input type="date"
+                       id="<?php echo $code ?>_dob"
+                       name="payment[dob]"
+                       title="<?php echo $this->__('Date of Birth') ?>"
+                       class="input-text required-entry"
+                       placeholder="dd/mm/YYYY"
+                       value="<?php echo $this->getInfoData('dob') ?>"
+                />
+            </div>
+        <?php endif;?>
+
+        <?php if ($helper->getConfig('show_taxvat_field')): ?>
+            <div class="cpf-input input-box">
+                <label class="required">
+                    <em>*</em> <?php echo $this->__('CPF/CNPJ do titular'); ?>
+                </label>
+                <input type="text"
+                       placeholder="<?php echo $this->__('Digite apenas números'); ?>"
+                       id="<?php echo $code ?>_cpf"
+                       class="required-entry input-text"
+                       maxlength="14"
+                       name="payment[cpf_cnpj]"
+                       title="<?php echo $this->__('CPF / CNPJ'); ?>"
+                       value="<?php echo $this->getInfoData('cpf_cnpj') ?>"/>
+            </div>
+        <?php endif;?>
+
+        <div class="pars input-box">
+            <input type="hidden" name="payment[base_grand_total]" value="<?php echo $baseGrandTotal; ?>" />
+            <?php if (!empty($installments)): ?>
+
+                <label for="<?php echo $code ?>_installments" class="required">
+                    <em>*</em><?php echo $this->__('Número de parcelas') ?>
+                </label>
+                <select name="payment[installments]"
+                        id="<?php echo $code ?>_installments"
+                        class="required-entry parcelas">
+                    <option value=""><?php echo $this->__('Selecione...'); ?></option>
+                    <?php foreach ($installments as $installment): ?>
+                        <?php
+                        $total = $coreHelper->currency($installment['total'], true, false);
+                        $interest = $installment['interest_rate'];
+                        $i = $installment['installments'];
+                        ?>
+                        <option value="<?php echo $i; ?>">
+                            <?php echo $i; ?>x
+                            <?php echo $this->__('de'); ?>
+                            <?php echo $coreHelper->currency($installment['value'], true, false); ?>
+                            <?php if ($interest): ?>
+                                <?php echo $this->__('(Total de %s, juros de %s&percnt;)', $total, $interest); ?>
+                            <?php else: ?>
+                                <?php echo $this->__('(sem juros)'); ?>
+                            <?php endif; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php else: ?>
+                <input type="hidden" name="payment[installments]" value="1" />
+            <?php endif; ?>
+        </div>
+
+    </fieldset>
+</div>

@@ -1,0 +1,122 @@
+<?php
+/* @var $this Mage_Core_Block_Template */
+
+/** @var Mage_Sales_Model_Order $order */
+$orderId = $this->getOrderId();
+$order = Mage::getModel('sales/order')->load($orderId);
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+
+$response = $helper->getApi()->pullReport($order);
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>" lang="<?php echo $this->getLang() ?>">
+<head>
+    <?php echo $this->getChildHtml('head'); ?>
+    <style type="text/css">
+        html,body { height:100%; }
+        a{
+            font-size: 11px;
+        }
+        dl {
+            padding: 0.5em;
+            transition: 0.5s;
+            -webkit-transition: 0.5s;
+        }
+        dt {
+            float: left;
+            clear: left;
+            width: 250px;
+            text-align: right;
+            font-weight: bold;
+            color: #e02f00;
+            border: 1px solid #dedede;
+            background: #efefef;
+            margin: 0 0 0.5em 0;
+        }
+        dt::after {
+            content: ":";
+        }
+        dd {
+            margin: 0 0 0.5em 260px;
+            background: #fefefe;
+            border: 1px solid #dedede;
+        }
+        .off {
+            display: none;
+        }
+        .on {
+            display: block;
+        }
+    </style>
+    <script>
+
+        function openTransaction(tId) {
+            var visibility =  document.getElementById('transaction-' + tId).style.display;
+            if (visibility == 'block') {
+                document.getElementById('transaction-' + tId).style.display = 'none';
+            } else {
+                var els = document.querySelectorAll('.transactions');
+                els.forEach(function (item, index) {
+                    item.style.display = 'none';
+                });
+                document.getElementById('transaction-' + tId).style.display = 'block';
+            }
+        }
+    </script>
+</head>
+<body id="html-body" style="background:#fff;">
+    <div id="preview" class="cms-revision-preview">
+        <?php if (isset($response['records'])): ?>
+            <ul>
+                <?php
+                $total = count($response['records']);
+                foreach ($response['records'] as $i => $record):?>
+                    <li>
+                        <h3>
+                            <?php $tId = (isset($record['transactionId'])) ? $record['transactionId'] : null;; ?>
+                            <?php echo $helper->__('Transaction %s', $tId); ?>
+                            <a href="javascript:void(0);" onclick="openTransaction(<?php echo $i; ?>)">
+                                (<?php echo $helper->__('Exibir'); ?>)
+                            </a>
+                        </h3>
+                        <dl class="transactions off" id="transaction-<?php echo $i; ?>">
+                            <?php foreach ($record as $key => $value):?>
+                                <?php if ($value): ?>
+                                    <dt><?php echo $key; ?></dt>
+                                    <dd><?php echo $value; ?></dd>
+                                <?php endif;?>
+                            <?php endforeach; ?>
+                        </dl>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <?php if (isset($response['result'])) :?>
+                <?php $result = $response['result']; ?>
+                <ul>
+                    <li>
+                        <h3>
+                            <?php $payOrderId = (isset($result['pay_order_id'])) ? $result['pay_order_id'] : null; ?>
+                            <?php echo $helper->__('Pay Order ID %s', $payOrderId); ?>
+                        </h3>
+                        <dl class="transactions">
+                            <?php if (isset($result['message'])): ?>
+                                <dt><?php echo $helper->__('Message'); ?></dt>
+                                <dd><?php echo $result['message']; ?></dd>
+                            <?php endif;?>
+                            <?php if (isset($result['status'])): ?>
+                                <dt><?php echo $helper->__('Status'); ?></dt>
+                                <dd><?php echo $result['status']; ?></dd>
+                            <?php endif;?>
+                        </dl>
+                    </li>
+                </ul>
+            <?php else: ?>
+                <?php echo $helper->__('There wasn\'t any records for this transaction') ;?>
+            <?php endif;?>
+        <?php endif; ?>
+    </div>
+</body>
+</html>

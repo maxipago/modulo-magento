@@ -1,0 +1,23 @@
+<?php
+/** @var Mage_Core_Block_Template $this */
+
+/** @var Mage_Sales_Model_Order $order */
+$order = $this->getOrder();
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+$profileUrl = Mage::helper('adminhtml')->getUrl('maxipago_admin/report/index', array('order_id' => $order->getId()));
+$syncUrl = Mage::helper('adminhtml')->getUrl('maxipago_admin/report/sync', array('order_id' => $order->getId()));
+?>
+
+<div class="buttons-set">
+    <button type="button"
+            class="scalable save"
+            onclick="window.open('<?php echo $profileUrl;?>', 'profile', 'width=640,height=480');"
+            style=""><span><?php echo $helper->__('Search transaction details'); ?></span>
+    </button>
+    <button type="button"
+            class="scalable save"
+            onclick="window.location.href = '<?php echo $syncUrl;?>';"
+            style=""><span><?php echo $helper->__('Sync order with maxiPago!'); ?></span>
+    </button>
+</div>

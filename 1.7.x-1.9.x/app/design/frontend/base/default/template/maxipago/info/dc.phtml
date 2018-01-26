@@ -1,0 +1,36 @@
+<?php
+/** @var MaxiPago_Payment_Block_Info_Dc $this */
+/** @var Mage_Payment_Model_Info $info */
+$info = $this->getInfo();
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+
+$ccType = $info->getCcType();
+$ccOwner = $info->getCcOwner();
+$ccNumber = $info->decrypt($info->getCcNumberEnc());
+$ccNumber = substr($ccNumber, 0,6) . '****' . substr($ccNumber, -4);
+
+$cpfCnpj = $info->getAdditionalInformation('cpf_cnpj');
+$orderId = $info->getAdditionalInformation('order_id');
+
+$tid = $info->getAdditionalInformation('processor_transaction_id');
+$nsu = $info->getAdditionalInformation('processor_reference_number');
+?>
+<p><b><?php echo $this->getMethod()->getTitle() ?></b></p>
+<div class="maxipago_dc_information">
+    <p><?php echo $this->__('Card Owner: %s', $ccOwner); ?></p>
+    <p><?php echo $this->__('Card Brand: %s', $helper->getBrand($ccType)) ?></p>
+
+    <p><?php echo $this->__('Card Number: %s', $ccNumber); ?></p>
+    <?php if ($cpfCnpj): ?>
+        <p><?php echo $this->__('CPF/CNPJ: %s', $cpfCnpj); ?></p>
+    <?php endif;?>
+
+    <?php if($tid): ?>
+        <p><?php echo $this->__('TID: %s', $tid) ?></p>
+    <?php endif; ?>
+
+    <?php if($nsu): ?>
+        <p><?php echo $this->__('NSU: %s', $nsu) ?></p>
+    <?php endif; ?>
+</div>

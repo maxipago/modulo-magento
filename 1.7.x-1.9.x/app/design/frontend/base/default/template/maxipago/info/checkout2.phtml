@@ -1,0 +1,50 @@
+<?php
+/** @var MaxiPago_Payment_Block_Info_Checkout2 $this */
+/** @var Mage_Payment_Model_Info $info */
+$info = $this->getInfo();
+
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+/** @var Mage_Core_Helper_Data $coreHelper */
+$coreHelper = Mage::helper('core');
+
+$payOrderId = $info->getAdditionalInformation('pay_order_id');
+$description = $info->getAdditionalInformation('description');
+$comments = $info->getAdditionalInformation('comments');
+$comments = $info->getAdditionalInformation('comments');
+$interestRate = $info->getAdditionalInformation('interest_rate');
+$installments = $info->getAdditionalInformation('installments');
+$installmentsValue = $info->getAdditionalInformation('installment_value');
+$totalWithInterest = $info->getAdditionalInformation('total_with_interest');
+$cpfCnpj = $info->getAdditionalInformation('cpf_cnpj');
+?>
+<div class="box-content">
+    <p><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></p>
+
+    <?php if($payOrderId): ?>
+        <p><?php echo $helper->__('Payment Order: %s', $payOrderId) ?></p>
+    <?php endif; ?>
+    <?php if($description): ?>
+        <p><?php echo $helper->__('Description: %s', $description) ?></p>
+    <?php endif; ?>
+
+    <?php
+    $textInterest = '';
+    if ($interestRate)
+        $textInterest = $helper->__('(juros de %s)', $interestRate.'%');
+    ?>
+    <p>
+        <?php echo $helper->__('Parcelas: %s', $installments.'x') ?>
+        <?php echo $helper->__('de %s', number_format($installmentsValue, 2, ',', '.'));?>
+        <?php echo $textInterest;?>
+    </p>
+
+    <?php if ($totalWithInterest): ?>
+        <p><?php echo $this->__('Total with interest: %s', $coreHelper->currency($totalWithInterest)); ?></p>
+    <?php endif; ?>
+
+    <?php if ($cpfCnpj): ?>
+        <p><?php echo $this->__('CPF/CNPJ: %s', $cpfCnpj); ?></p>
+    <?php endif;?>
+
+</div>
