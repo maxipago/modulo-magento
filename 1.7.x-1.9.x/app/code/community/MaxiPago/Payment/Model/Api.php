@@ -41,7 +41,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
             $merchantId = $this->_getHelper()->getConfig('merchant_id');
             $merchantKey = $this->_getHelper()->getConfig('merchant_key');
             $merchantSecret = $this->_getHelper()->getConfig('merchant_secret');
-            if ($merchantId && $merchantSecret) {
+            if ($merchantId && $merchantKey) {
                 $environment = ($this->_getHelper()->getConfig('sandbox')) ? 'TEST' : 'LIVE';
                 $this->_maxipago = new MaxiPago();
                 $this->_maxipago->setCredentials($merchantId, $merchantKey);
@@ -517,7 +517,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
             $orderData = $this->getOrderHelper()->getOrderData($payment);
             $data = array_merge($data, $billingData, $shippingData, $orderData);
 
-            $this->getMaxipago()->saledebitCard3DS($data);
+            $this->getMaxipago()->saleDebitCard3DS($data);
             $response = $this->getMaxipago()->response;
 
             $this->_getHelper()->log($this->getMaxipago()->xmlRequest);
