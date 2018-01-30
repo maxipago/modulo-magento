@@ -588,7 +588,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         $installmentsInformation = array();
         $paymentAmount = $quote->getBaseGrandTotal();
         $installments = $this->getConfig('max_installments', $code);
-        $installmentsWithoutInterest = $this->getConfig(
+        $installmentsWithoutInterest = (int) $this->getConfig(
             'installments_without_interest_rate',
             $code
         );
@@ -596,6 +596,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         $irPerInstallments = false;
         if ($this->getConfig('use_interest_per_installments', $code) && $this->getConfig('interest_rate_per_installments', $code)) {
             $irPerInstallments = unserialize($this->getConfig('interest_rate_per_installments', $code));
+            $installmentsWithoutInterest = 0;
         }
 
         for ($i = 1; $i <= $installments; $i++) {
@@ -678,6 +679,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
             }
             $interestRate = ($irPerInstallments['value'][$installments] / $installments);
             $interestType = 'simple';
+            $installmentsWithoutInterestRate = 0;
         }
 
         $interestRate = (float)(str_replace(',', '.', $interestRate)) / 100;
@@ -689,7 +691,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         }
 
         try {
-            if ($installments > $installmentsWithoutInterestRate && $interestRate > 0 && $installmentsWithoutInterestRate > 0) {
+            if ($installments > $installmentsWithoutInterestRate && $interestRate > 0) {
                 switch ($interestType) {
                     case 'price':
                         $value = $total * (($interestRate * pow((1 + $interestRate), $installments)) / (pow((1 + $interestRate), $installments) - 1));

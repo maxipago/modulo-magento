@@ -33,6 +33,7 @@ class MaxiPago_Payment_Model_Source_Cc_Processor
             array('value' => '5', 'label' => $helper->__('e.Rede')),
             array('value' => '6', 'label' => $helper->__('Elavon')),
             array('value' => '9', 'label' => $helper->__('Stone')),
+            array('value' => '10', 'label' => $helper->__('bin')),
         );
     }
 }

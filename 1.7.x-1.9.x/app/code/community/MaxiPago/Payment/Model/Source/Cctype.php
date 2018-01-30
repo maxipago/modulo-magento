@@ -62,6 +62,7 @@ class MaxiPago_Payment_Model_Source_Cctype
                     array('value' => '5', 'label' => $helper->__('e.Rede')),
                     array('value' => '6', 'label' => $helper->__('Elavon')),
                     array('value' => '9', 'label' => $helper->__('Stone')),
+                    array('value' => '10', 'label' => $helper->__('bin')),
                 );
                 break;
             case 'MC':
@@ -73,12 +74,14 @@ class MaxiPago_Payment_Model_Source_Cctype
                     array('value' => '5', 'label' => $helper->__('e.Rede')),
                     array('value' => '6', 'label' => $helper->__('Elavon')),
                     array('value' => '9', 'label' => $helper->__('Stone')),
+                    array('value' => '10', 'label' => $helper->__('bin')),
                 );
                 break;
             case 'AM':
                 $processors = array(
                     array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
                     array('value' => '4', 'label' => $helper->__('Cielo')),
+                    array('value' => '5', 'label' => $helper->__('e.Rede')),
                 );
                 break;
             case 'DC':
@@ -95,6 +98,8 @@ class MaxiPago_Payment_Model_Source_Cctype
                 $processors = array(
                     array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
                     array('value' => '4', 'label' => $helper->__('Cielo')),
+                    array('value' => '5', 'label' => $helper->__('e.Rede')),
+                    array('value' => '10', 'label' => $helper->__('bin')),
                 );
                 break;
             case 'DI':

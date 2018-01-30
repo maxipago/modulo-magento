@@ -34,7 +34,7 @@
                         <div class="maxipago_main">
                             <div class="maxipago_description">
                                 <strong>
-                                    Módulo Magento maxiPago! versão 0.2.5 (Jan/2018)<br>
+                                    Módulo Magento maxiPago! versão 0.2.9 (Jan/2018)<br>
                                     Copyright © 2017 maxiPago! Todos os direitos reservados.
                                 </strong>
                             </div>
@@ -443,31 +443,16 @@
                                     </depends>
                                 </minimum_installments_value>
 
-                                <installments_without_interest_rate>
-                                    <label>Installments without interest</label>
-                                    <frontend_type>text</frontend_type>
+                                <use_interest_per_installments>
+                                    <label>Use Interest Per Installments</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
                                     <sort_order>220</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
-                                    <validate>validate-digits</validate>
-                                    <depends>
-                                        <installments>1</installments>
-                                    </depends>
-                                </installments_without_interest_rate>
-
-                                <interest_type>
-                                    <label>Interest Rate Type</label>
-                                    <frontend_type>select</frontend_type>
-                                    <source_model>maxipago/source_type</source_model>
-                                    <sort_order>230</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>1</show_in_store>
-                                    <depends>
-                                        <installments>1</installments>
-                                    </depends>
-                                </interest_type>
+                                    <comment><![CDATA[The config above will be ignored]]></comment>
+                                </use_interest_per_installments>
 
                                 <interest_rate>
                                     <label>General Interest Rate</label>
@@ -484,16 +469,33 @@
                                     </depends>
                                 </interest_rate>
 
-                                <use_interest_per_installments>
-                                    <label>Use Interest Per Installments</label>
-                                    <frontend_type>select</frontend_type>
-                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                <installments_without_interest_rate>
+                                    <label>Installments without interest</label>
+                                    <frontend_type>text</frontend_type>
                                     <sort_order>241</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
-                                    <comment><![CDATA[The config above will be ignored]]></comment>
-                                </use_interest_per_installments>
+                                    <validate>validate-digits</validate>
+                                    <depends>
+                                        <installments>1</installments>
+                                        <use_interest_per_installments>0</use_interest_per_installments>
+                                    </depends>
+                                </installments_without_interest_rate>
+
+                                <interest_type>
+                                    <label>Interest Rate Type</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>maxipago/source_type</source_model>
+                                    <sort_order>242</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                    <depends>
+                                        <installments>1</installments>
+                                        <use_interest_per_installments>0</use_interest_per_installments>
+                                    </depends>
+                                </interest_type>
 
                                 <interest_rate_per_installments translate="label">
                                     <label>Interest Rate Per Installments</label>

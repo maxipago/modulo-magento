@@ -21,7 +21,7 @@
 <config>
     <modules>
         <MaxiPago_Payment>
-            <version>0.2.5</version>
+            <version>0.2.9</version>
         </MaxiPago_Payment>
     </modules>
 

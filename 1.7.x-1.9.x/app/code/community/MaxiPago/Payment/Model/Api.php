@@ -585,7 +585,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
                 'customerIdExt' => $cpfCnpj,
                 'expirationDate' => $expirationDate,
                 'currencyCode' => $currencyCode,
-                'number' => $orderId, //Our Number
+                'number' => str_pad($order->getId(), 8, "0", STR_PAD_LEFT),//Our Number
                 'instructions' => $instructions, //Instructions
             );
 
