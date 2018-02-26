@@ -22,15 +22,13 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
     protected $_helper;
 
     /**
-     * @param  $oayment
-     * @param array $orderData
+     * @param Mage_Sales_Model_Order $order
      * @return array
      */
-    public function getOrderData($payment)
+    public function getOrderData($order)
     {
         $orderData = array();
-        /** @var Mage_Sales_Model_Order $order */
-        $order = $payment->getOrder();
+
         $items = $order->getAllVisibleItems();
 
         $countItems = count($items);
@@ -62,7 +60,7 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
      * @param Mage_Sales_Model_Order $order
      * @param null $transactionId
      */
-    public function createInvoice(Mage_Sales_Model_Order $order, $transactionId = null)
+    public function createInvoice(Mage_Sales_Model_Order $order, $transactionId = null, $code = 'maxipago_cc')
     {
         $helper = $this->_getHelper();
         if ($order->canInvoice()) {
@@ -95,7 +93,7 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
 
             $helper->log('Order: ' . $order->getIncrementId() . " - invoice created");
 
-            $status = $this->_getHelper()->getConfig('captured_order_status', 'maxipago_cc');
+            $status = $this->_getHelper()->getConfig('captured_order_status', $code);
             if ($status) {
                 $message = Mage::helper('maxipago')->__('The payment was confirmed - Transaction ID: %s', (string)$transactionId);
                 $order->addStatusHistoryComment($message, $status)->setIsCustomerNotified(true);
@@ -106,6 +104,10 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
 
     }
 
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @param null $transactionId
+     */
     public function cancelOrder(Mage_Sales_Model_Order $order, $transactionId = null)
     {
         /** @var Mage_Sales_Model_Order_Payment $payment */

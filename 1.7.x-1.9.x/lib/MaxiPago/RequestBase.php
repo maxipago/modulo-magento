@@ -247,6 +247,11 @@ class maxiPago_RequestBase {
                     $this->tag = "<api-request></api-request>";
                     $this->setPaymentOrderRequest();
                     break;
+    			case "fraud":
+                    $this->tag = "<transaction-request></transaction-request>";
+                    $this->setFraudRequest();
+                    $this->setFraudDetails();
+                    break;
                 case "report":
                     $this->tag = "<rapi-request></rapi-request>";
                     $this->type = "transactionDetailReport";
@@ -406,6 +411,7 @@ class maxiPago_RequestBase {
     protected $voidOnHighRisk;
     protected $websiteId;
     protected $fraudToken;
+    protected $payType;
     
     //CreditCard Data
     protected $number;

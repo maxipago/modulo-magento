@@ -67,7 +67,7 @@ class MaxiPago_Payment_Helper_Customer extends Mage_Core_Helper_Data
         $address = false;
 
         $data = array();
-        $data[$type . 'Id'] = $order->getCustomerEmail();
+        $data[$type . 'Id'] = ($customerId) ? $type . $customer->getId() : $type . $order->getCustomerEmail();
         $data[$type . 'Name'] = $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname();
         $data[$type . 'Email'] = $order->getCustomerEmail();
         $data[$type . 'BirthDate'] = $this->_getHelper()->getDate($order->getCustomerDob());

@@ -21,7 +21,7 @@
 <config>
     <modules>
         <MaxiPago_Payment>
-            <version>0.2.10</version>
+            <version>0.3.1</version>
         </MaxiPago_Payment>
     </modules>
 
@@ -118,45 +118,54 @@
                     </maxipago_front_init_before>
                 </observers>
             </controller_front_init_before>
+            <sales_order_place_after>
+                <observers>
+                    <maxipago_fraud_analysis>
+                        <type>singleton</type>
+                        <class>maxipago/observer</class>
+                        <method>sendOrderToFraudAnalysis</method>
+                    </maxipago_fraud_analysis>
+                </observers>
+            </sales_order_place_after>
         </events>
 
-        <!--<sales>-->
-            <!--<quote>-->
-                <!--<totals>-->
-                    <!--<interest>-->
-                        <!--<class>maxipago/total_quote_interest</class>-->
-                        <!--<before>grand_total</before>-->
-                        <!--<after>subtotal,shipping,tax</after>-->
-                        <!--<renderer>checkout/total_tax</renderer>-->
-                    <!--</interest>-->
-                <!--</totals>-->
-            <!--</quote>-->
-            <!--<order_invoice>-->
-                <!--<totals>-->
-                    <!--<interest>-->
-                        <!--<class>maxipago/total_invoice_interest</class>-->
-                    <!--</interest>-->
-                <!--</totals>-->
-            <!--</order_invoice>-->
-            <!--<order_creditmemo>-->
-                <!--<totals>-->
-                    <!--<interest>-->
-                        <!--<class>maxipago/total_creditmemo_interest</class>-->
-                    <!--</interest>-->
-                <!--</totals>-->
-            <!--</order_creditmemo>-->
-        <!--</sales>-->
-        <!--<pdf>-->
-            <!--<totals>-->
-                <!--<interest translate="title">-->
-                    <!--<title>Interest</title>-->
-                    <!--<source_field>interest_amount</source_field>-->
-                    <!--<font_size>7</font_size>-->
-                    <!--<display_zero>0</display_zero>-->
-                    <!--<sort_order>202</sort_order>-->
-                <!--</interest>-->
-            <!--</totals>-->
-        <!--</pdf>-->
+        <sales>
+            <quote>
+                <totals>
+                    <interest>
+                        <class>maxipago/total_quote_interest</class>
+                        <before>grand_total</before>
+                        <after>subtotal,shipping,tax</after>
+                        <renderer>checkout/total_tax</renderer>
+                    </interest>
+                </totals>
+            </quote>
+            <order_invoice>
+                <totals>
+                    <interest>
+                        <class>maxipago/total_invoice_interest</class>
+                    </interest>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <interest>
+                        <class>maxipago/total_creditmemo_interest</class>
+                    </interest>
+                </totals>
+            </order_creditmemo>
+        </sales>
+        <pdf>
+            <totals>
+                <interest translate="title">
+                    <title>Interest</title>
+                    <source_field>interest_amount</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>202</sort_order>
+                </interest>
+            </totals>
+        </pdf>
 
         <fieldsets>
             <sales_convert_quote_address>

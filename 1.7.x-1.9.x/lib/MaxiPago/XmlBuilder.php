@@ -12,7 +12,7 @@ class maxiPago_XmlBuilder extends maxiPago_RequestBase {
     }
   
     protected function setRequest() {
-        $this->xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'.$this->tag);
+        $this->xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>' . $this->tag);
         if ($this->tag == "<transaction-request></transaction-request>") { 
         	$this->xml->addChild("version", $this->version); 
         }
@@ -54,6 +54,7 @@ class maxiPago_XmlBuilder extends maxiPago_RequestBase {
         switch($type) {
             case "auth":
             case "sale":
+            case "fraud":
             	$this->xml->order->$type->addChild("billing");
             	if (strlen($this->billingId) > 0) {
             		$this->xml->order->$type->billing->addChild("id", $this->billingId);
@@ -322,11 +323,12 @@ class maxiPago_XmlBuilder extends maxiPago_RequestBase {
                     $this->xml->request->billing->addChild("customerIdExt", strtoupper($this->customerIdExt));
                 }
                 break;
+
             default:
                 break;
         }
     }
-    
+
     protected function setBillingPhone(){
     	$type = $this->type;
         $this->xml->order->$type->billing->addChild("phones");
@@ -818,6 +820,23 @@ class maxiPago_XmlBuilder extends maxiPago_RequestBase {
 
             $this->setAddress();
         }
+    }
+
+
+    protected function setFraudRequest()
+    {
+        $type = $this->type;
+        $this->setRequest();
+        $this->setOrder();
+
+        $this->xml->order->$type->addChild("transactionDetail");
+        $this->xml->order->$type->transactionDetail->addChild("payType");
+//        if (strlen($this->payType)) {
+//            $this->xml->order->$type->transactionDetail->payType->addChild("creditCard");
+//        }
+
+        $this->setPayment();
+        $this->setItens();
     }
 
     protected function setRapiRequest() {

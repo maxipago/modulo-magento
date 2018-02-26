@@ -100,6 +100,50 @@ class MaxiPago_Payment_Model_Observer extends Varien_Event_Observer
      * @param Varien_Event_Observer $observer
      * @return $this
      */
+    public function sendOrderToFraudAnalysis(Varien_Event_Observer $observer)
+    {
+        try {
+            if (Mage::getStoreConfig('payment/maxipago_fraud/enabled')) {
+                $code = MaxiPago_Payment_Helper_Data::MAXIPAGO_FRAUD_CODE;
+                $helper = $this->_getHelper();
+
+                /** @var Mage_Sales_Model_Order $order */
+                $order = $observer->getOrder();
+                $methodCode = $order->getPayment()->getMethod();
+
+                $minimumAmount = $this->_getHelper()->getConfig('minimum_amount', $code);
+                if ($order->getGrandTotal() >= $minimumAmount) {
+
+                    $availableMethods = explode(',', $this->_getHelper()->getConfig('payment_methods', $code));
+                    if (in_array($methodCode, $availableMethods)) {
+
+                        $availableStatus = explode(',', $this->_getHelper()->getConfig('allowed_statuses', $code));
+                        if (in_array($order->getStatus(), $availableStatus)) {
+
+                            $order->getPayment()->setAdditionalInformation('fingerprint_id', $helper->getFingerPrintId());
+                            $order->getPayment()->save();
+                            $helper->resetFingerPrintId();
+
+                            /** @var MaxiPago_Payment_Model_Api $api */
+                            $api = $this->_getHelper()->getApi();
+                            $api->fraudRequest($order);
+                        }
+
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+
+        return $this;
+
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     * @return $this
+     */
     public function salesOrderPaymentCapture(Varien_Event_Observer $observer)
     {
         /** @var Mage_Sales_Model_Order_Payment $payment */

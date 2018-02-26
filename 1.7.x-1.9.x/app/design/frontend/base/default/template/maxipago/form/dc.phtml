@@ -44,7 +44,7 @@ $methods = $helper->getMethodsEnabled('maxipago_dc');
                         </label>
                         <input type="text" placeholder="Digite apenas números" id="<?php echo $code ?>_number"
                                name="payment[dc_number]" title="<?php echo $this->__('Número do cartão') ?>"
-                               class="input-text validate-cc-number validate-cc-type required-entry"
+                               class="input-text validate-cc-number-maxipago required-entry"
                                value="<?php echo $this->getInfoData('dc_number') ?>"/>
 
                     </div>
@@ -132,6 +132,24 @@ $methods = $helper->getMethodsEnabled('maxipago_dc');
     </div> <!-- case -->
 </fieldset>
 <script type="text/javascript">
+
+    Validation.add(
+        'validate-cc-number-maxipago',
+        'Please enter a valid credit card number.',
+        function(v, elm) {
+            // remove non-numerics
+            var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_number')) + '_cc_type');
+            if (ccTypeContainer && typeof Validation.creditCartTypes.get(ccTypeContainer.value) != 'undefined'
+                && Validation.creditCartTypes.get(ccTypeContainer.value)[2] == false) {
+                if (!Validation.get('IsEmpty').test(v) && Validation.get('validate-digits').test(v)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            return maxipago.validateCreditCard(v);
+        }
+    );
 
     $j('#payment_form_<?php echo $code ?> input.maxipago_dc_type').click(function(){
         $j('#payment_form_<?php echo $code ?> input.<?php echo $code ?>_type').parent().find('img').removeClass('on');

@@ -632,6 +632,31 @@ class MaxiPago extends maxiPago_ResponseBase {
     		throw $e;
     	}
     }
+
+    public function fraud($array) {
+    	try {
+    		if (!is_array($array)) {
+    			throw new BadMethodCallException('[maxiPago Class] Method '.__METHOD__.' must receive array as input');
+    		}
+    		if (is_object(maxiPago_RequestBase::$logger)) {
+    			maxiPago_RequestBase::$logger->logNotice('Calling method '.__METHOD__);
+    		}
+    		$this->request = $array;
+    		$req = new maxiPago_Request($this->credentials);
+    		$req->setVars($this->request);
+    		$req->setEndpoint($this->host.'/UniversalAPI/postXML');
+    		$req->setTransactionType("fraud");
+    		$this->response = $req->processRequest();
+            $this->xmlRequest = $req->xmlRequest;
+            $this->xmlResponse = $req->xmlResponse;
+    	}
+    	catch (Exception $e) {
+    		if (is_object(maxiPago_RequestBase::$logger)) {
+    			maxiPago_RequestBase::$logger->logCrit($e->getMessage()." in ".$e->getFile()." on line ".$e->getLine());
+    		}
+    		throw $e;
+    	}
+    }
     
     public function saleDebitCard3DS($array) {
     	try {

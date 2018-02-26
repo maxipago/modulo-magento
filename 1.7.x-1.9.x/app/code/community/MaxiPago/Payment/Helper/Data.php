@@ -20,6 +20,8 @@
 class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
 {
     const LOG_FILE = 'maxipago.log';
+    const MAXIPAGO_FRAUD_CODE = 'maxipago_fraud';
+    const MAXIPAGO_FRAUD_PROCESSOR = 1;
 
     protected $_api = null;
 
@@ -588,7 +590,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         $installmentsInformation = array();
         $paymentAmount = $quote->getBaseGrandTotal();
         $installments = $this->getConfig('max_installments', $code);
-        $installmentsWithoutInterest = (int) $this->getConfig(
+        $installmentsWithoutInterest = (int)$this->getConfig(
             'installments_without_interest_rate',
             $code
         );
@@ -758,7 +760,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
     {
         $xml = preg_replace_callback(
             '/<' . $tag . '>(.*)<\/' . $tag . '>/m',
-            function($matches) use ($tag){
+            function ($matches) use ($tag) {
                 $number = $matches[1];
                 if (isset($matches[1]) && !empty($matches[1])) {
                     if (strlen($number) > 10) {
@@ -883,8 +885,8 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
     public function getPhoneNumber($telefone)
     {
         if (strlen($telefone) >= 10) {
-            $telefone = preg_replace('/^D/','', $telefone);
-            $telefone = substr($telefone, 2, strlen($telefone) -2);
+            $telefone = preg_replace('/^D/', '', $telefone);
+            $telefone = substr($telefone, 2, strlen($telefone) - 2);
 
         }
         return $telefone;
@@ -892,7 +894,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
 
     public function getAreaNumber($telefone)
     {
-        $telefone = preg_replace('/^D/','', $telefone);
+        $telefone = preg_replace('/^D/', '', $telefone);
         $telefone = substr($telefone, 0, 2);
         return $telefone;
     }
@@ -905,5 +907,28 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
     {
         $date = new DateTime($dob);
         return $date->format($format);
+    }
+
+    /**
+     * @return string
+     */
+    public function getFingerPrintId()
+    {
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+
+        $fingerprint_id = $session->getData('fingerprint_id');
+        if (!$fingerprint_id) {
+            $fingerprint_id = hash('sha512', date('ymdhis'));
+            $session->setData('fingerprint_id', $fingerprint_id);
+        }
+        return $fingerprint_id;
+    }
+
+    public function resetFingerPrintId()
+    {
+        /** @var Mage_Checkout_Model_Session $session */
+        $session = Mage::getSingleton('checkout/session');
+        $session->unsetData('fingerprint_id');
     }
 }

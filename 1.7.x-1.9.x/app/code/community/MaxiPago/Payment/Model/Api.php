@@ -233,7 +233,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
 
             $billingData = $this->getCustomerHelper()->getAddressData($order, $payment);
             $shippingData = $this->getCustomerHelper()->getAddressData($order, $payment, 'shipping');
-            $orderData = $this->getOrderHelper()->getOrderData($payment);
+            $orderData = $this->getOrderHelper()->getOrderData($order);
 
             $data = array_merge($data, $billingData, $shippingData, $orderData);
 
@@ -266,6 +266,84 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
                 Mage::throwException($error);
             }
 
+
+            return $response;
+
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+
+        return false;
+
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @return object|boolean
+     */
+    public function fraudRequest($order)
+    {
+        try {
+            /** @var Mage_Payment_Model_Method_Abstract $order */
+            $payment = $order->getPayment()->getMethodInstance();
+            $response = null;
+            $code = MaxiPago_Payment_Helper_Data::MAXIPAGO_FRAUD_CODE;
+
+            //Order Data
+            $orderId = $order->getIncrementId();
+            $fraudCheck = 'Y';
+            $currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+            $ipAddress = $this->getIpAddress();
+            $chargeTotal = number_format($order->getGrandTotal(), 2, '.', '');
+            $shippingAmount = number_format($order->getShippingAmount(), 2, '.', '');
+
+            $data = array(
+                'processorID' => MaxiPago_Payment_Helper_Data::MAXIPAGO_FRAUD_PROCESSOR,
+                'referenceNum' => $orderId, //Order ID
+                'customerIdExt' => $order->getCustomerTaxvat(),
+                'ipAddress' => $ipAddress,
+                'fraudCheck' => $fraudCheck,
+                'currencyCode' => $currencyCode,
+                'chargeTotal' => $chargeTotal,
+                'shippingTotal' => $shippingAmount
+            );
+
+            $fraudProcessorId = $this->_getHelper()->getConfig('fraud_processor', $code);
+            if ($fraudProcessorId) {
+                if ($fraudProcessorId == '98') {
+                    $sessionId = Mage::getSingleton("core/session")->getEncryptedSessionId();
+                    $data['fraudToken'] = $sessionId;
+                } else if ($fraudProcessorId == '99') {
+                    $merchantId = $this->_getHelper()->getConfig('merchant_id');
+                    $merchantSecret = $this->_getHelper()->getConfig('merchant_secret');
+                    $hash = hash_hmac('md5', $merchantId . '*' . $orderId, $merchantSecret);
+                    $data['fraudToken'] = $hash;
+                }
+                $data['websiteId'] = 'DEFAULT';
+            }
+
+            $billingData = $this->getCustomerHelper()->getAddressData($order, $payment);
+            $shippingData = $this->getCustomerHelper()->getAddressData($order, $payment, 'shipping');
+            $orderData = $this->getOrderHelper()->getOrderData($order);
+
+            $data = array_merge($data, $billingData, $shippingData, $orderData);
+
+            $this->getMaxipago()->fraud($data);
+            $response = $this->getMaxipago()->response;
+
+            $this->_getHelper()->log($this->getMaxipago()->xmlRequest);
+            $this->_getHelper()->log($this->getMaxipago()->xmlResponse);
+
+            $this->_getHelper()->saveTransaction('fraud', $data, $response, $orderId);
+
+            if (
+                (isset($response['errorMessage']) && $response['errorMessage'])
+                ||
+                (isset($response['errorMsg']) && $response['errorMsg'])
+            ) {
+                $error = isset($response['errorMessage']) ? $response['errorMessage'] : $response['errorMsg'];
+                Mage::throwException($error);
+            }
 
             return $response;
 
@@ -514,7 +592,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
 
             $billingData = $this->getCustomerHelper()->getAddressData($order, $payment);
             $shippingData = $this->getCustomerHelper()->getAddressData($order, $payment, 'shipping');
-            $orderData = $this->getOrderHelper()->getOrderData($payment);
+            $orderData = $this->getOrderHelper()->getOrderData($order);
             $data = array_merge($data, $billingData, $shippingData, $orderData);
 
             $this->getMaxipago()->saleDebitCard3DS($data);
@@ -591,7 +669,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
 
             $billingData = $this->getCustomerHelper()->getAddressData($order, $payment);
             $shippingData = $this->getCustomerHelper()->getAddressData($order, $payment, 'shipping');
-            $orderData = $this->getOrderHelper()->getOrderData($payment);
+            $orderData = $this->getOrderHelper()->getOrderData($order);
             $data = array_merge($data, $billingData, $shippingData, $orderData);
 
             $this->getMaxipago()->boletoSale($data);
@@ -735,7 +813,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
 
             $billingData = $this->getCustomerHelper()->getAddressData($order, $payment);
             $shippingData = $this->getCustomerHelper()->getAddressData($order, $payment, 'shipping');
-            $orderData = $this->getOrderHelper()->getOrderData($payment);
+            $orderData = $this->getOrderHelper()->getOrderData($order);
             $data = array_merge($data, $billingData, $shippingData, $orderData);
 
             $this->getMaxipago()->redepay($data);
