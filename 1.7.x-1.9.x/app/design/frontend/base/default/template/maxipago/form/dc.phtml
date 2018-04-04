@@ -44,7 +44,7 @@ $methods = $helper->getMethodsEnabled('maxipago_dc');
                         </label>
                         <input type="text" placeholder="Digite apenas números" id="<?php echo $code ?>_number"
                                name="payment[dc_number]" title="<?php echo $this->__('Número do cartão') ?>"
-                               class="input-text validate-cc-number-maxipago required-entry"
+                               class="input-text validate-dc-number-maxipago required-entry"
                                value="<?php echo $this->getInfoData('dc_number') ?>"/>
 
                     </div>
@@ -134,16 +134,17 @@ $methods = $helper->getMethodsEnabled('maxipago_dc');
 <script type="text/javascript">
 
     Validation.add(
-        'validate-cc-number-maxipago',
+        'validate-dc-number-maxipago',
         'Please enter a valid credit card number.',
         function(v, elm) {
             // remove non-numerics
-            var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_cc_number')) + '_cc_type');
-            if (ccTypeContainer && typeof Validation.creditCartTypes.get(ccTypeContainer.value) != 'undefined'
-                && Validation.creditCartTypes.get(ccTypeContainer.value)[2] == false) {
-                if (!Validation.get('IsEmpty').test(v) && Validation.get('validate-digits').test(v)) {
-                    return true;
-                } else {
+            var ccTypeContainer = $(elm.id.substr(0,elm.id.indexOf('_dc_number')) + '_dc_type');
+            if (
+                ccTypeContainer
+                && typeof Validation.creditCartTypes.get(ccTypeContainer.value) != 'undefined'
+                && Validation.creditCartTypes.get(ccTypeContainer.value)[2] == false
+            ) {
+                if (Validation.get('IsEmpty').test(v) || !Validation.get('validate-digits').test(v)) {
                     return false;
                 }
             }

@@ -74,53 +74,63 @@ if ($redePayTitle)
 if ($redePaySortOrder)
     Mage::getConfig()->saveConfig('payment/maxipago_redepay/sort_order', $redePaySortOrder);
 
-$installer->run("
-CREATE TABLE IF NOT EXISTS `{$this->getTable('maxipago/card')}` (
-  `entity_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
-  `customer_id` INT(10) NOT NULL,
-  `customer_id_maxipago` INT(10) NOT NULL,
-  `token` VARCHAR(100) NOT NULL,
-  `description` VARCHAR(60) NOT NULL,
-  `brand` VARCHAR(60) NOT NULL,
-  PRIMARY KEY (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
-");
+//MaciPago Credit Card table to store tokens
+$newTable = $this->getTable('maxipago/card');
+if (!$installer->tableExists($newTable)) {
+    $installer->run("
+    CREATE TABLE IF NOT EXISTS `{$this->getTable('maxipago/card')}` (
+      `entity_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+      `customer_id` INT(10) NOT NULL,
+      `customer_id_maxipago` INT(10) NOT NULL,
+      `token` VARCHAR(100) NOT NULL,
+      `description` VARCHAR(60) NOT NULL,
+      `brand` VARCHAR(60) NOT NULL,
+      PRIMARY KEY (`entity_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ");
+}
 
-$installer->run("
-CREATE TABLE IF NOT EXISTS `{$this->getTable('maxipago/customer')}` (
-  `entity_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
-  `customer_id` INT(10) NOT NULL,
-  `customer_id_maxipago` INT(10) NOT NULL,
-  PRIMARY KEY (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
-");
+//MaxiPago Customer Table
+$newTable = $this->getTable('maxipago/customer');
+if (!$installer->tableExists($newTable)) {
+    $installer->run("
+    CREATE TABLE IF NOT EXISTS `{$newTable}` (
+      `entity_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+      `customer_id` INT(10) NOT NULL,
+      `customer_id_maxipago` INT(10) NOT NULL,
+      PRIMARY KEY (`entity_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ");
+}
 
-$installer->run("
-CREATE TABLE IF NOT EXISTS `{$this->getTable('maxipago/transaction')}` (
-  `entity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `method` VARCHAR(255) NOT NULL,
-  `order_id` VARCHAR(255) NULL,
-  `maxipago_order_id` VARCHAR(255) NULL,
-  `ticket_url` TEXT,
-  `eft_url` TEXT,
-  `redepay_url` TEXT,
-  `checkout_url` TEXT,
-  `request` TEXT NOT NULL,
-  `response` TEXT NOT NULL,
-  `response_code` INT(10) UNSIGNED NOT NULL,
-  `response_message` VARCHAR(100) NOT NULL,
-  `created_at` DATETIME,
-  PRIMARY KEY (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
-");
+//MaxiPago Transaction table
+$newTable = $this->getTable('maxipago/transaction');
+if (!$installer->tableExists($newTable)) {
+    $installer->run("
+    CREATE TABLE IF NOT EXISTS `{$newTable}` (
+      `entity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      `method` VARCHAR(255) NOT NULL,
+      `order_id` VARCHAR(255) NULL,
+      `maxipago_order_id` VARCHAR(255) NULL,
+      `ticket_url` TEXT,
+      `eft_url` TEXT,
+      `redepay_url` TEXT,
+      `checkout_url` TEXT,
+      `request` TEXT NOT NULL,
+      `response` TEXT NOT NULL,
+      `response_code` INT(10) UNSIGNED NOT NULL,
+      `response_message` VARCHAR(100) NOT NULL,
+      `created_at` DATETIME,
+      PRIMARY KEY (`entity_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ");
+}
 
 /**
  * Add 'custom_attribute' attribute for entities
  */
 $tables = array(
     $installer->getTable('sales/quote_address'),
-    $installer->getTable('sales/order_address'),
-    $installer->getTable('sales/quote'),
     $installer->getTable('sales/order'),
     $installer->getTable('sales/invoice'),
     $installer->getTable('sales/creditmemo')
@@ -128,9 +138,11 @@ $tables = array(
 
 $code = 'interest_amount';
 foreach ($tables as $table) {
-    if(!$installer->getConnection()->tableColumnExists($table, $code)){
-        $installer->run("ALTER TABLE `".$table."` ADD `" . $code . "` DECIMAL( 10, 2 ) NOT NULL;");
-        $installer->run("ALTER TABLE `".$table."` ADD `base_" . $code . "` DECIMAL( 10, 2 ) NOT NULL;");
+    if (!$installer->getConnection()->tableColumnExists($table, $code)) {
+        $installer->getConnection()->addColumn($table, $code, "DECIMAL( 10, 2 ) NOT NULL");
+    }
+    if (!$installer->getConnection()->tableColumnExists($table, 'base_' . $code)) {
+        $installer->getConnection()->addColumn($table, 'base_' . $code, "DECIMAL( 10, 2 ) NOT NULL");
     }
 }
 

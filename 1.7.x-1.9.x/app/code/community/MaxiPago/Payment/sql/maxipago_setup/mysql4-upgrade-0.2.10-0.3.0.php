@@ -5,8 +5,18 @@ $installer->startSetup();
 
 
 try {
-    $installer->run("ALTER TABLE  `{$this->getTable('sales/order')}` ADD  `maxipago_fraud_code` VARCHAR(255) NOT NULL");
-    $installer->run("ALTER TABLE  `{$this->getTable('sales/order')}` ADD  `maxipago_fraud_status` VARCHAR(255) NOT NULL");
+
+    $table = $this->getTable('sales/order');
+    $code = 'maxipago_fraud_code';
+    if(!$installer->getConnection()->tableColumnExists($table, $code)) {
+        $installer->getConnection()->addColumn($table, $code, "VARCHAR(255) NOT NULL");
+    }
+
+    $code = 'maxipago_fraud_status';
+    if(!$installer->getConnection()->tableColumnExists($table, $code)) {
+        $installer->getConnection()->addColumn($table, $code, "VARCHAR(255) NOT NULL");
+    }
+
 } catch (Exception $e) {
     Mage::logException($e);
 }

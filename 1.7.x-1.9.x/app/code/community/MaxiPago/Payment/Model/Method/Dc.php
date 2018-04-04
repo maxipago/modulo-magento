@@ -15,7 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
- * @copyright     Copyright (c) 2017
+ *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -75,6 +75,9 @@ class MaxiPago_Payment_Model_Method_Dc extends MaxiPago_Payment_Model_Method_Abs
         $info->setCcLast4($dcLast4);
 
         $info->setAdditionalInformation('cpf_cnpj', $cpfCnpj);
+
+        Mage::unregister('maxipago_dc_cid');
+        Mage::register('maxipago_dc_cid', $dcCid);
 
         return $this;
     }

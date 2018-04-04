@@ -14,7 +14,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
- * @copyright     Copyright (c) 2017
+ *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -564,7 +564,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
             $currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
             $ipAddress = $this->getIpAddress();
 
-            $ccCid = Mage::registry('maxipago_cc_cid');
+            $ccCid = Mage::registry('maxipago_dc_cid');
 
             $ccOwner = $payment->getCcOwner();
             $ccNumber = $payment->decrypt($payment->getCcNumberEnc());

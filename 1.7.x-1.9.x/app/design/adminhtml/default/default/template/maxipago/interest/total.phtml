@@ -1,0 +1,13 @@
+<?php
+$this->setPriceDataObject($this->getSource())
+?>
+
+<?php if ((float) $this->getSource()->getInterestAmount()): ?>
+    <tr>
+        <td class="label"><?php echo Mage::helper('maxipago')->__('Interest') ?></td>
+        <td>
+            <?php echo $this->displayPrices($this->getSource()->getBaseInterestAmount(), $this->getSource()->getInterestAmount()); ?>
+        </td>
+    </tr>
+<?php endif; ?>
+

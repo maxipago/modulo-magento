@@ -1,0 +1,44 @@
+<?php
+/**
+ * @var MaxiPago_Payment_Block_Adminhtml_Catalog_Product_Tab_Seller $this
+ * @var MaxiPago_Payment_Model_Resource_Seller_Collection $sellers
+ */
+
+$sellers = $this->getSellers();
+$sellersUrl = Mage::helper('adminhtml')->getUrl('maxipago_admin/adminhtml_sellers');
+?>
+
+<div class="fieldset fieldset-wide children-options">
+    <div class="entry-edit custom-options">
+        <div class="entry-edit-head">
+            <h4><?php echo $this->__('MaxiPago Seller') ?></h4>
+        </div>
+        <div id="seller_container" class="box">
+            <div id="seller_container_top">
+                <table class="form-list">
+                    <td class="label">
+                        <?php echo $this->__('Seller ID from maxiPago!'); ?>
+                    </td>
+                    <td class="value">
+                        <?php if ($sellers->count()): ?>
+                            <select name="product[maxipago_seller]">
+                                <option value=""></option>
+                                <?php
+                                /** @var MaxiPago_Payment_Model_Seller $seller */
+                                foreach ($sellers as $seller): ?>
+                                    <option value="<?php echo $seller->getSellerId();?>"><?php echo $seller->getName(); ?></option>
+                                <?php endforeach; ?>
+
+                            <div class="note">
+                                <p><strong><?php echo $this->__('Note:') ?></strong>
+                                    <?php echo $this->__('You need to get the Seller ID from the maxiPago!'); ?></p>
+                            </div>
+                        <?php else: ?>
+                            <p><?php echo $this->__('You need to register the sellers <a href="%s">here</a>', $sellersUrl); ?>
+                        <?php endif; ?>
+                    </td>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

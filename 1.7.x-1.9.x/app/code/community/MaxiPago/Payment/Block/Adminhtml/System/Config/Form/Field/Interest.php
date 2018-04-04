@@ -27,10 +27,10 @@ class MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Interest
     protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
         $this->setElement($element);
-        $html = '<div id="installment_rate_template" style="display:none">';
+        $html = '<div id="installment_maxipago_rate_template" style="display:none">';
         $html .=    $this->_getRowTemplateHtml();
         $html .= '</div>';
-        $html .= '<ul id="installment_rate_container">';
+        $html .= '<ul id="installment_maxipago_rate_container">';
         $html .= '<li>';
         $html .= '  <div style="width:100px;float:left">';
         $html .=    $this->__('Installments');
@@ -47,8 +47,24 @@ class MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Interest
             }
         }
         $html .= '</ul>';
-        $html .= $this->_getAddRowButtonHtml('installment_rate_container', 'installment_rate_template', $this->__('Add'));
-        $html .= '<script>$$(\'#installment_rate_container .maxipago_interest_rate_per_installments\').each(function(el, i){$(el).value = i + 1;});</script>';
+        $html .= $this->_getAddRowButtonHtml('installment_maxipago_rate_container', 'installment_maxipago_rate_template', $this->__('Add'));
+        $html .= '<script>' .
+            '$$(\'#installment_maxipago_rate_container .maxipago_interest_rate_per_installments\').each(function(el, i){$(el).value = i + 2;});' .
+            '$(\'payment_maxipago_cc_use_interest_per_installments\').observe(\'change\', function(event){' .
+            'if (this.options[this.selectedIndex].value == \'1\') {' .
+            '$(\'row_payment_maxipago_cc_interest_rate_per_installments\').show();' .
+            '} else {' .
+            '$(\'row_payment_maxipago_cc_interest_rate_per_installments\').hide();' .
+            '}' .
+            '});' .
+            'if (\'createEvent\' in document) {' .
+                'var evt = document.createEvent(\'HTMLEvents\');' .
+                'evt.initEvent(\'change\', false, true);' .
+                '$(\'payment_maxipago_cc_use_interest_per_installments\').dispatchEvent(evt);' .
+            '} else {' .
+                '$(\'payment_maxipago_cc_use_interest_per_installments\').fireEvent("onchange");' .
+            '}' .
+            '</script>';
         return $html;
     }
 
@@ -85,7 +101,7 @@ class MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Interest
     protected function _getAddRowButtonHtml($container, $template, $title = 'Add')
     {
         if (!isset($this->_addRowButtonHtml[$container])) {
-            $onclick = "Element.insert(\$('" . $container . "'), {bottom: \$('" . $template . "').innerHTML});\$\$('#installment_rate_container .maxipago_interest_rate_per_installments').each(function(el, i){\$(el).value = i + 1;});";
+            $onclick = "Element.insert(\$('" . $container . "'), {bottom: \$('" . $template . "').innerHTML});\$\$('#installment_maxipago_rate_container .maxipago_interest_rate_per_installments').each(function(el, i){\$(el).value = i + 2;});";
             $this->_addRowButtonHtml[$container] = $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setType('button')
                 ->setClass('add ' . $this->_getDisabled())
@@ -100,7 +116,7 @@ class MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Interest
     protected function _getRemoveRowButtonHtml($selector = 'li', $title = 'Remove')
     {
         if (!$this->_removeRowButtonHtml) {
-            $onclick = "Element.remove($(this).up('" . $selector . "')); \$\$('#installment_rate_container .maxipago_interest_rate_per_installments').each(function(el, i){\$(el).value = i + 1;});";
+            $onclick = "Element.remove($(this).up('" . $selector . "')); \$\$('#installment_maxipago_rate_container .maxipago_interest_rate_per_installments').each(function(el, i){\$(el).value = i + 2;});";
             $this->_removeRowButtonHtml = $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setType('button')
                 ->setClass('delete v-middle ' . $this->_getDisabled())

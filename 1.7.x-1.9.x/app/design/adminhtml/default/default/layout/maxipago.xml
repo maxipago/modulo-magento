@@ -19,6 +19,12 @@
  */
 -->
 <layout version="1.0.2">
+    <maxipago_admin_sellers_index>
+        <reference name="content">
+            <block type="maxipago/adminhtml_seller" name="maxipago.seller" />
+        </reference>
+    </maxipago_admin_sellers_index>
+
     <adminhtml_sales_order_create_index>
         <reference name="head">
             <action method="addJs"><script>lib/jquery/jquery-1.12.0.min.js</script></action>
@@ -27,4 +33,55 @@
             <action method="addItem"><type>js_css</type><script>maxipago/payment.css</script></action>
         </reference>
     </adminhtml_sales_order_create_index>
+
+    <adminhtml_catalog_product_edit>
+        <reference name="product_tabs">
+            <action method="addTab">
+                <name>maxipago_seller</name>
+                <block>maxipago/adminhtml_catalog_product_tab_seller</block>
+            </action>
+        </reference>
+    </adminhtml_catalog_product_edit>
+
+    <adminhtml_sales_order_view>
+        <reference name="order_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_view>
+
+    <adminhtml_sales_order_invoice_new>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+
+    <adminhtml_sales_order_invoice_updateqty>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+
+    <adminhtml_sales_order_creditmemo_view>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="maxipago.interest" template="maxipago/interest/total.phtml"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_view>
 </layout>

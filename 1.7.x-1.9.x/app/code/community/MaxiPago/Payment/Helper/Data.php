@@ -601,7 +601,15 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
             $installmentsWithoutInterest = 0;
         }
 
-        for ($i = 1; $i <= $installments; $i++) {
+        $i = 1;
+        $installmentsInformation[$i] = array(
+            'installments' => 1,
+            'value' => $paymentAmount,
+            'total' => $paymentAmount,
+            'interest_rate' => 0,
+        );
+
+        for ($i = 2; $i <= $installments; $i++) {
 
             if (($installments > $installmentsWithoutInterest) && ($i > $installmentsWithoutInterest)) {
                 $interestRate = $this->getConfig('interest_rate', $code);

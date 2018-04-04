@@ -22,7 +22,7 @@
     <sections>
         <payment>
             <groups>
-                <maxipago_settings translate="label comment tooltip" module="maxipago">
+                <maxipago_settings translate="label, comment, tooltip" module="maxipago">
                     <label>maxiPago!</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>180</sort_order>
@@ -34,14 +34,14 @@
                         <div class="maxipago_main">
                             <div class="maxipago_description">
                                 <strong>
-                                    Módulo Magento maxiPago! versão 0.3.1 (Fev/2018)<br>
-                                    Copyright © 2017 maxiPago! Todos os direitos reservados.
+                                    Módulo Magento maxiPago! versão 0.5.0 (Fev/2018)<br>
+                                    Copyright © 2018 maxiPago! Todos os direitos reservados.
                                 </strong>
                             </div>
                         </div>
                     ]]></comment>
                     <fields>
-                        <instructions>
+                        <instructions translate="label">
                             <label>Instructions</label>
                             <frontend_type>label</frontend_type>
                             <frontend_model>maxipago/adminhtml_system_config_settings_comment</frontend_model>
@@ -50,7 +50,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </instructions>
-                        <merchant_id>
+                        <merchant_id translate="label">
                             <label>Merchant ID</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>10</sort_order>
@@ -59,7 +59,7 @@
                             <show_in_store>1</show_in_store>
                             <comment>Merchant ID which identifies the seller</comment>
                         </merchant_id>
-                        <merchant_key>
+                        <merchant_key translate="label">
                             <label>Merchant Store Key</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>11</sort_order>
@@ -68,7 +68,7 @@
                             <show_in_store>1</show_in_store>
                             <comment>Store's Merchant Key</comment>
                         </merchant_key>
-                        <merchant_secret>
+                        <merchant_secret translate="label">
                             <label>Merchant Secret Key</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>12</sort_order>
@@ -77,7 +77,7 @@
                             <show_in_store>1</show_in_store>
                             <comment>Store's Merchant Secret</comment>
                         </merchant_secret>
-                        <sandbox>
+                        <sandbox translate="label">
                             <label>Test Environment.</label>
                             <comment>It should inform if test environment will be used, the accounts will not be processed in Sandbox environment.</comment>
                             <frontend_type>select</frontend_type>
@@ -87,7 +87,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </sandbox>
-                        <show_taxvat_field>
+                        <show_taxvat_field translate="label">
                             <label>Show Taxvat field at the checkout</label>
                             <comment>If you want to show the taxvat field at the store's checkout.</comment>
                             <frontend_type>select</frontend_type>
@@ -179,6 +179,17 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </show_payment_info>
+                        <enabled_split>
+                            <label>Enable Split</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[If a product is assigned to a seller, the credit card transaction would be splited among them<br> <strong>It'll work only for credit card transactions</strong>]]></comment>
+                            <tooltip><![CDATA[To assign a product to a seller, you should enter into the product and assing it in the tab "MaxiPago Seller".]]></tooltip>
+                        </enabled_split>
                         <cron_time>
                             <label>Cron execution time</label>
                             <frontend_type>select</frontend_type>
@@ -397,7 +408,7 @@
                                 </can_refund>
 
                                 <installments>
-                                    <label>Installments</label>
+                                    <label>Enable Installments</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
                                     <sort_order>200</sort_order>
@@ -980,7 +991,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <fields>
-                                <active>
+                                <active translate="label">
                                     <label>Enabled</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -991,7 +1002,7 @@
                                     <comment><![CDATA[Checkout 2.0 works only in admin]]></comment>
                                 </active>
 
-                                <title>
+                                <title translate="label">
                                     <label>Title</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>20</sort_order>
@@ -1020,7 +1031,7 @@
                                     <show_in_store>1</show_in_store>
                                 </fraud_check>
 
-                                <checkout2_payment_action>
+                                <checkout2_payment_action translate="label">
                                     <label>Payment Action</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>maxipago/source_action</source_model>
@@ -1050,8 +1061,8 @@
                                     <show_in_store>1</show_in_store>
                                 </processor_id>
 
-                                <installments>
-                                    <label>Installments</label>
+                                <installments translate="label">
+                                    <label>Enable Installments</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
                                     <sort_order>200</sort_order>
@@ -1059,7 +1070,7 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </installments>
-                                <installment_type>
+                                <installment_type translate="label">
                                     <label>Installment Type</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>maxipago/source_installment</source_model>
@@ -1071,7 +1082,7 @@
                                         <installments>1</installments>
                                     </depends>
                                 </installment_type>
-                                <max_installments>
+                                <max_installments translate="label">
                                     <label>Max Installments</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>210</sort_order>
@@ -1083,7 +1094,7 @@
                                         <installments>1</installments>
                                     </depends>
                                 </max_installments>
-                                <installments_without_interest_rate>
+                                <installments_without_interest_rate translate="label">
                                     <label>Installments without interest</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>220</sort_order>
@@ -1095,7 +1106,7 @@
                                         <installments>1</installments>
                                     </depends>
                                 </installments_without_interest_rate>
-                                <interest_type>
+                                <interest_type translate="label">
                                     <label>Interest Rate Type</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>maxipago/source_type</source_model>
@@ -1107,7 +1118,7 @@
                                         <installments>1</installments>
                                     </depends>
                                 </interest_type>
-                                <interest_rate>
+                                <interest_rate translate="label">
                                     <label>Interest Rate</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>240</sort_order>
@@ -1120,7 +1131,7 @@
                                         <installments>1</installments>
                                     </depends>
                                 </interest_rate>
-                                <minimum_installments_value>
+                                <minimum_installments_value translate="label">
                                     <label>Minimium Installments Value</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>210</sort_order>
@@ -1133,7 +1144,7 @@
                                     </depends>
                                 </minimum_installments_value>
 
-                                <allowspecific>
+                                <allowspecific translate="label">
                                     <label>Payment from Applicable Countries</label>
                                     <frontend_type>allowspecific</frontend_type>
                                     <sort_order>400</sort_order>
@@ -1142,7 +1153,7 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </allowspecific>
-                                <specificcountry>
+                                <specificcountry translate="label">
                                     <label>Payment from Specific Countries</label>
                                     <frontend_type>multiselect</frontend_type>
                                     <sort_order>410</sort_order>
@@ -1151,7 +1162,7 @@
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
                                 </specificcountry>
-                                <min_order_total>
+                                <min_order_total translate="label">
                                     <label>Minimum Order Total</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>420</sort_order>
@@ -1160,7 +1171,7 @@
                                     <show_in_store>1</show_in_store>
                                     <validate>validate-number</validate>
                                 </min_order_total>
-                                <max_order_total>
+                                <max_order_total translate="label">
                                     <label>Maximum Order Total</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>430</sort_order>
@@ -1169,7 +1180,7 @@
                                     <show_in_store>1</show_in_store>
                                     <validate>validate-number</validate>
                                 </max_order_total>
-                                <sort_order>
+                                <sort_order translate="label">
                                     <label>Sort Order</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>1000</sort_order>
@@ -1220,7 +1231,7 @@
                                     <!--<show_in_default>1</show_in_default>-->
                                     <!--<show_in_website>1</show_in_website>-->
                                     <!--<show_in_store>0</show_in_store>-->
-                                    <!--<comment>Minimum Amount that'll send the order to analysis at maxiPago! (Formato: 9.99)</comment>-->
+                                    <!--<comment>Minimum Amount that'll send the order to analysis at maxiPago! (Format: 9.99)</comment>-->
                                     <!--<depends>-->
                                         <!--<enabled>1</enabled>-->
                                     <!--</depends>-->
@@ -1240,7 +1251,7 @@
                                     <!--</depends>-->
                                 <!--</payment_methods>-->
 
-                                <!--<allowed_statuses translate="label comment">-->
+                                <!--<allowed_statuses>-->
                                     <!--<label>Order Statuses</label>-->
                                     <!--<frontend_type>multiselect</frontend_type>-->
                                     <!--<source_model>adminhtml/system_config_source_order_status</source_model>-->
@@ -1248,7 +1259,7 @@
                                     <!--<show_in_default>1</show_in_default>-->
                                     <!--<show_in_website>1</show_in_website>-->
                                     <!--<show_in_store>1</show_in_store>-->
-                                    <!--<comment>maxiPago will check only the selected order statuses.</comment>-->
+                                    <!--<comment>MaxiPago will check only the selected order statuses.</comment>-->
                                     <!--<depends>-->
                                         <!--<enabled>1</enabled>-->
                                     <!--</depends>-->

@@ -21,7 +21,7 @@
 <config>
     <modules>
         <MaxiPago_Payment>
-            <version>0.3.1</version>
+            <version>0.5.0</version>
         </MaxiPago_Payment>
     </modules>
 
@@ -43,6 +43,12 @@
                     <customer>
                         <table>maxipago_customers</table>
                     </customer>
+                    <seller>
+                        <table>maxipago_sellers</table>
+                    </seller>
+                    <splitrule>
+                        <table>maxipago_split_rules</table>
+                    </splitrule>
                 </entities>
             </maxipago_resource>
         </models>
@@ -134,9 +140,7 @@
                 <totals>
                     <interest>
                         <class>maxipago/total_quote_interest</class>
-                        <before>grand_total</before>
-                        <after>subtotal,shipping,tax</after>
-                        <renderer>checkout/total_tax</renderer>
+                        <after>grand_total</after>
                     </interest>
                 </totals>
             </quote>

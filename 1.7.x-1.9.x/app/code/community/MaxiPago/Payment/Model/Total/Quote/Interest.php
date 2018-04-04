@@ -14,7 +14,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
- * @copyright     Copyright (c) 2017
+ *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
  */
@@ -33,33 +33,52 @@ class MaxiPago_Payment_Model_Total_Quote_Interest
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         parent::collect($address);
-        if ($address->getAddressType() == Mage_Sales_Model_Quote_Address::TYPE_BILLING) {
-            if ($address->getQuote()->getPayment()->getMethod() == 'maxipago_cc') {
-                $interestAmount = $this->_getHelper()->getSession()->getQuote()->getInterestAmount();
 
-                if ($interestAmount != 0) {
-                    $address->setInterestAmount($interestAmount);
-                    $address->setBaseInterestAmount($interestAmount);
-                    $this->_addAmount($interestAmount);
-                    $this->_addBaseAmount($interestAmount);
-                }
+        $this->_setAmount(0);
+        $this->_setBaseAmount(0);
 
-            }
+        $items = $this->_getAddressItems($address);
+        if (!count($items)) {
+            return $this;
         }
+
+        $interestAmount = 0;
+        $quote = $address->getQuote();
+
+        $payment = Mage::app()->getRequest()->getPost('payment');
+        if (
+            $address->getQuote()->getPayment()->getMethod() == 'maxipago_cc'
+        ) {
+            if (isset($payment['installments']) && $payment['installments'] > 1) {
+                $installments = $payment['installments'];
+                $grandTotal = $payment['base_grand_total'];
+                $installmentsValue = $this->_getHelper()->getInstallmentValue($grandTotal, $installments);
+                $totalOrderWithInterest = $installmentsValue * $installments;
+                $interestAmount = $totalOrderWithInterest - $grandTotal;
+            }
+
+            $address->setInterestAmount($interestAmount);
+            $address->setBaseInterestAmount($interestAmount);
+            $quote->setInterestAmount($interestAmount);
+            $quote->setBaseInterestAmount($interestAmount);
+
+        }
+
+        $this->_addAmount($interestAmount);
+        $this->_addBaseAmount($interestAmount);
+
         return $this;
     }
 
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
-        if ($address->getAddressType() == Mage_Sales_Model_Quote_Address::TYPE_BILLING) {
-            $amount = $address->getInterestAmount();
-            if ($amount != 0) {
-                $address->addTotal(array(
-                    'code' => $this->getCode(),
-                    'title' => Mage::helper('maxipago')->__('Interest'),
-                    'value' => $amount
-                ));
-            }
+        $amount = $address->getInterestAmount();
+        if ($amount > 0) {
+            $address->addTotal(array(
+                'code' => $this->getCode(),
+                'title' => Mage::helper('maxipago')->__('Interest'),
+                'value' => $amount
+            ));
         }
 
         return $this;
