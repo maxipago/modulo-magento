@@ -15,13 +15,14 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 -->
 <config>
     <modules>
         <MaxiPago_Payment>
-            <version>0.5.0</version>
+            <version>0.5.4</version>
         </MaxiPago_Payment>
     </modules>
 
@@ -126,11 +127,11 @@
             </controller_front_init_before>
             <sales_order_place_after>
                 <observers>
-                    <maxipago_fraud_analysis>
+                    <maxipago_sales_order_place_after>
                         <type>singleton</type>
                         <class>maxipago/observer</class>
-                        <method>sendOrderToFraudAnalysis</method>
-                    </maxipago_fraud_analysis>
+                        <method>salesOrderPlaceAfter</method>
+                    </maxipago_sales_order_place_after>
                 </observers>
             </sales_order_place_after>
         </events>
@@ -224,6 +225,14 @@
                 </maxipagomaxipago>
             </updates>
         </layout>
+
+        <product>
+            <collection>
+                <attributes>
+                    <maxipago_seller />
+                </attributes>
+            </collection>
+        </product>
     </frontend>
 
     <adminhtml>
@@ -276,6 +285,7 @@
                 <captured_order_status>processing</captured_order_status>
                 <stop_processing>1</stop_processing>
                 <max_installments>1</max_installments>
+                <split_charge>single</split_charge>
             </maxipago_cc>
             <maxipago_dc>
                 <active>0</active>

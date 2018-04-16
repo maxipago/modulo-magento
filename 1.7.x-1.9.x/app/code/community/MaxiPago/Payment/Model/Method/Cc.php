@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -112,6 +113,7 @@ class MaxiPago_Payment_Model_Method_Cc
         $info->setAdditionalInformation('cc_interest_rate', $interestRate);
         $info->setAdditionalInformation('cc_installment_value', $this->_getHelper()->getInstallmentValue($grandTotal, $installments));
         $info->setAdditionalInformation('cc_installments', $installments);
+        $info->setAdditionalInformation('installments', $installments);
         $info->setAdditionalInformation('base_grand_total', $grandTotal);
 
         $info->setCcType($ccType);

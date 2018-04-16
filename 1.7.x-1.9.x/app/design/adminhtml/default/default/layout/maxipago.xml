@@ -25,6 +25,19 @@
         </reference>
     </maxipago_admin_sellers_index>
 
+    <maxipago_admin_sellers_products>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="maxipago/adminhtml_seller_edit_tab_products_grid" name="maxipago.products.grid"/>
+        </block>
+    </maxipago_admin_sellers_products>
+
+    <maxipago_admin_sellers_orders>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="maxipago/adminhtml_seller_edit_tab_orders_grid" name="maxipago.orders.grid"/>
+        </block>
+    </maxipago_admin_sellers_orders>
+
+
     <adminhtml_sales_order_create_index>
         <reference name="head">
             <action method="addJs"><script>lib/jquery/jquery-1.12.0.min.js</script></action>

@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -34,15 +35,29 @@ class MaxiPago_Payment_Block_Adminhtml_Seller_Edit_Tabs
     protected function _beforeToHtml()
     {
         $this->addTab('form_section', array(
-            'label' => Mage::helper('maxipago')->__('Personalizar Conteúdo'),
-            'title' => Mage::helper('maxipago')->__('Personalizar Conteúdo'),
+            'label' => Mage::helper('maxipago')->__('Informações Gerais'),
+            'title' => Mage::helper('maxipago')->__('Informações Gerais'),
             'content' => $this->getLayout()->createBlock('maxipago/adminhtml_seller_edit_tab_form')->toHtml(),
         ));
-        $this->addTab('products', array(
-            'label' => Mage::helper('maxipago')->__('Products'),
-            'title' => Mage::helper('maxipago')->__('Products'),
-            'content' => $this->getLayout()->createBlock('maxipago/adminhtml_seller_edit_tab_products')->toHtml(),
-        ));
+
+
+        $seller = Mage::registry('seller_data');
+        if ($seller && $seller->getId()) {
+
+            $this->addTab('products', array(
+                'label'     => Mage::helper('maxipago')->__('Products'),
+                'title'     => Mage::helper('maxipago')->__('Products'),
+                'url'       => $this->getUrl('*/*/products', array('_current' => true)),
+                'class'     => 'ajax',
+            ));
+
+            $this->addTab('orders', array(
+                'label'     => Mage::helper('maxipago')->__('Orders'),
+                'title'     => Mage::helper('maxipago')->__('Orders'),
+                'url'       => $this->getUrl('*/*/orders', array('_current' => true)),
+                'class'     => 'ajax',
+            ));
+        }
 
         return parent::_beforeToHtml();
     }

@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -38,7 +39,7 @@ class MaxiPago_Payment_Block_Adminhtml_Seller_Edit
 
         $this->_addButton('saveandcontinue', array(
             'label' => Mage::helper('catalog')->__('Save and Continue Edit'),
-            'onclick' => 'saveAndContinueEdit()',
+            'onclick' => 'editForm.submit($(\'edit_form\').action + \'back/edit/\')()',
             'class' => 'save',
         ), -100);
 
@@ -46,8 +47,8 @@ class MaxiPago_Payment_Block_Adminhtml_Seller_Edit
 
     public function getHeaderText()
     {
-        if (Mage::registry('maxipago_data') && Mage::registry('maxipago_data')->getId()) {
-            return Mage::helper('maxipago')->__("Edit Seller '%s'", $this->escapeHtml(Mage::registry('maxipago_data')->getName()));
+        if (Mage::registry('seller_data') && Mage::registry('seller_data')->getId()) {
+            return Mage::helper('maxipago')->__("Edit Seller '%s'", $this->escapeHtml(Mage::registry('seller_data')->getName()));
         } else {
             return Mage::helper('maxipago')->__('Add Seller');
         }

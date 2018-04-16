@@ -1,0 +1,30 @@
+<?php
+/** @var MaxiPago_Payment_Helper_Data $helper */
+$helper = Mage::helper('maxipago');
+
+$clearsaleApp = $helper->getConfig('clearsale_app', 'maxipago_cc');
+$fraudProcessor = $helper->getConfig('fraud_processor', 'maxipago_cc'); // 98 = ClearSale, 99 = Kount
+?>
+<?php if ($clearsaleApp && $fraudProcessor == 98):?>
+    <script>
+        (function (a, b, c, d, e, f, g){
+            a['CsdpObject'] = e; a[e] = a[e] || function () {
+                    (a[e].q = a[e].q || []).push(arguments)
+                },
+                a[e].l = 1 * new Date(); f = b.createElement(c),
+                g = b.getElementsByTagName(c)[0]; f.async = 1; f.src = d;
+            g.parentNode.insertBefore(f, g)
+        })
+        (window, document, 'script', '//device.clearsale.com.br/p/fp.js','csdp');
+        csdp('app', '<?php echo $clearsaleApp;?>');
+        csdp('sessionid', '<?php echo $helper->getFraudToken('clearsale');?>');
+    </script>
+<?php elseif ($fraudProcessor == 99): ?>
+    <?php
+    $fraudToken = $helper->getFraudToken('kount');
+    $reservedOrderId = $helper->getSession()->getQuote()->getReservedOrderId();
+    $merchantId = $helper->getConfig('merchant_id');
+    $url = 'https://testauthentication.maxipago.net/redirection_service/logo?m=' . $merchantId . '&s=' . $reservedOrderId . '&h=' . $fraudToken;
+    ?>
+    <iframe width="1" height="1" frameborder="0" src="<?php echo $url; ?>"></iframe>
+<?php endif; ?>

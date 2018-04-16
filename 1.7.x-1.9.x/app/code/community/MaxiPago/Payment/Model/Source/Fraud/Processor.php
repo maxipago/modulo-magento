@@ -14,6 +14,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class MaxiPago_Payment_Model_Source_Fraud_Processor

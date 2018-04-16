@@ -15,6 +15,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
@@ -46,6 +47,7 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         'EL' => 'Elo',
         'DI' => 'Discover',
         'HC' => 'Hipercard',
+        'HI' => 'Hiper',
         'AU' => 'Aura',
         'JC' => 'JCB',
         'CR' => 'Credz'
@@ -75,36 +77,35 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
     );
 
     protected $_transactionStates = array(
-        '1' => 'Em Progresso',
-        '3' => 'Capturado',
-        '6' => 'Autorizado',
-        '7' => 'Recuzado',
-        '9' => 'Anulado',
-        '10' => 'Pago',
-        '22' => 'Boleto Emitido',
-        '34' => 'Boleto Visualizado',
-        '35' => 'Boleto Pago com valor abaixo',
-        '36' => 'Boleto Pago com valor acima',
-
-        '4' => 'Pendente de Captura',
-        '5' => 'Pendente de Autorização',
-        '8' => 'Recusado',
-        '11' => 'Pendente de Confirmação',
-        '12' => 'Pendente de Revisão (verificar com o suporte)',
-        '13' => 'Pendente de Revisão',
-        '14' => 'Pendente de Captura (re-tentativa)',
-        '16' => 'Pendente de Estorno',
-        '18' => 'Pendente Anulação',
-        '19' => 'Pendente Anulação (re-tentativa)',
-        '29' => 'Pendente Autenticação',
-        '30' => 'Autenticado',
-        '31' => 'Pendente Estorno (retentativa)',
-        '32' => 'Autenticação em Progresso',
-        '33' => 'Autenticação Enviada',
-        '38' => 'File submission Pendente Reversal',
-        '44' => 'Análise de Fraude Aprovada',
-        '45' => 'Análise de Fraude Recusada',
-        '46' => 'Análise de Fraude Revisão'
+        'in_progress' => array('code' => '1', 'label' => 'Em Progresso'),
+        'captured' => array('code' => '3', 'label' => 'Capturado'),
+        'pending_capture' => array('code' => '4', 'label' => 'Pendente de Captura'),
+        'pending_authorization' => array('code' => '5', 'label' => 'Pendente de Autorização'),
+        'authorized' => array('code' => '6', 'label' => 'Autorizado'),
+        'declined' => array('code' => '7', 'label' => 'Recuzado'),
+        'reversed' => array('code' => '8', 'label' => 'Recusado'),
+        'voided' => array('code' => '9', 'label' => 'Anulado'),
+        'paid' => array('code' => '10', 'label' => 'Pago'),
+        'pending_confirmation' => array('code' => '11', 'label' => 'Pendente de Confirmação'),
+        'pending_review' => array('code' => '12', 'label' => 'Pendente de Revisão (verificar com o suporte)'),
+        'pending_reversion' => array('code' => '13', 'label' => 'Pendente de Revisão'),
+        'pending_capture_retrial' => array('code' => '14', 'label' => 'Pendente de Captura (re-tentativa)'),
+        'pending_reversal_retrial' => array('code' => '16', 'label' => 'Pendente de Estorno'),
+        'pending_void' => array('code' => '18', 'label' => 'Pendente Anulação'),
+        'pending_void_retrial' => array('code' => '19', 'label' => 'Pendente Anulação (re-tentativa)'),
+        'boleto_issued' => array('code' => '22', 'label' => 'Boleto Emitido'),
+        'pending_authentication' => array('code' => '29', 'label' => 'Pendente Autenticação'),
+        'authenticated' => array('code' => '30', 'label' => 'Autenticado'),
+        'pending_reversal' => array('code' => '31', 'label' => 'Pendente Estorno (retentativa)'),
+        'authentication_in_progress' => array('code' => '32', 'label' => 'Autenticação em Progresso'),
+        'submitted_authentication' => array('code' => '33', 'label' => 'Autenticação Enviada'),
+        'boleto_viewed' => array('code' => '34', 'label' => 'Boleto Visualizado'),
+        'boleto_underpaid' => array('code' => '35', 'label' => 'Boleto Pago com valor abaixo'),
+        'boleto_overpaid' => array('code' => '36', 'label' => 'Boleto Pago com valor acima'),
+        'file_submission_pending_reversal' => array('code' => '38', 'label' => 'File submission Pendente Reversal'),
+        'fraud_approved' => array('code' => '44', 'label' => 'Análise de Fraude Aprovada'),
+        'fraud_declined' => array('code' => '45', 'label' => 'Análise de Fraude Recusada'),
+        'fraud_review' => array('code' => '46', 'label' => 'Análise de Fraude Revisão')
     );
 
     protected $_countryCodes = array(
@@ -345,10 +346,30 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         return $this->_interestMethods;
     }
 
-    public function getTransactionState($code)
+    /**
+     * @param $code
+     * @return null|string
+     */
+    public function getTransactionStateLabel($code)
     {
-        if (isset($this->_transactionStates[$code])) {
-            return $this->_transactionStates[$code];
+        foreach ($this->_transactionStates as $transactionState)
+            if ($transactionState['code'] == $code) {
+                return $this->__($transactionState['label']);
+            }
+
+        return null;
+    }
+
+    /**
+     * Receive a transaction state string code and return the state number
+     *
+     * @param $state
+     * @return null|string
+     */
+    public function getTransactionState($state)
+    {
+        if (isset($this->_transactionStates[$state])) {
+            return $this->_transactionStates[$state]['code'];
         }
 
         return null;
@@ -939,4 +960,30 @@ class MaxiPago_Payment_Helper_Data extends Mage_Core_Helper_Data
         $session = Mage::getSingleton('checkout/session');
         $session->unsetData('fingerprint_id');
     }
+
+    public function getReservedOrderId()
+    {
+        //Order Increment ID
+        $incrementOrderId = $this->getSession()->getQuote()->getReservedOrderId();
+        if (!$incrementOrderId) {
+            $this->getSession()->getQuote()->reserveOrderId();
+        }
+
+        return $this->getSession()->getQuote()->getReservedOrderId();
+    }
+
+    public function getFraudToken($type)
+    {
+        $fraudToken = null;
+        if ($type == 'clearsale') {
+            $fraudToken = Mage::getSingleton("core/session")->getEncryptedSessionId();
+        } else if ($type == 'kount') {
+            $merchantId = $this->getConfig('merchant_id');
+            $merchantSecret = $this->getConfig('merchant_secret');
+            $fraudToken = hash_hmac('md5', $merchantId . '*' . $this->getReservedOrderId(), $merchantSecret);
+        }
+
+        return $fraudToken;
+    }
+
 }

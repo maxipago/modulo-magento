@@ -57,6 +57,7 @@ try {
 
     $productAttribute = 'maxipago_seller';
     if (!$installer->getAttribute(Mage_Catalog_Model_Product::ENTITY, $productAttribute, 'attribute_id')) {
+        //I'm not using source model because if you disable the module magento throw an error
         $installer->addAttribute(
             Mage_Catalog_Model_Product::ENTITY,
             $productAttribute,

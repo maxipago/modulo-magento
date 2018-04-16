@@ -15,6 +15,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Cc_Processors
@@ -38,7 +39,7 @@ class MaxiPago_Payment_Block_Adminhtml_System_Config_Form_Field_Cc_Processors
 	
 	public function getProcessors()
 	{
-        /** @var MaxiPago_Payment_Model_Source_Processor $processor */
+        /** @var MaxiPago_Payment_Model_Source_Cc_Processor $processor */
         $processor = Mage::getSingleton('maxipago/source_cc_processor');
 		return $processor->toOptionArray();
 	}

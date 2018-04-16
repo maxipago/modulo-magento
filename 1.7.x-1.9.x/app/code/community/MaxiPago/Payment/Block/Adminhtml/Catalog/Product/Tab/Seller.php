@@ -13,6 +13,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -22,6 +23,7 @@ class MaxiPago_Payment_Block_Adminhtml_Catalog_Product_Tab_Seller
     implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
     protected $_fieldName = null;
+    protected $_sellers = null;
 
     protected function _construct()
     {
@@ -58,18 +60,32 @@ class MaxiPago_Payment_Block_Adminhtml_Catalog_Product_Tab_Seller
     }
 
     /**
+     * @return int
+     */
+    public function hasSeller()
+    {
+        if ($this->getSellers()) {
+            return $this->getSellers()->count();
+        }
+
+        return 0;
+    }
+
+    /**
      * @return MaxiPago_Payment_Model_Resource_Seller_Collection
      */
     public function getSellers()
     {
-        /** @var MaxiPago_Payment_Model_Resource_Seller_Collection $collection */
-        $collection = Mage::getModel('maxipago/seller')->getCollection();
-        return $collection;
+        if (!$this->_sellers) {
+            /** @var MaxiPago_Payment_Model_Resource_Seller_Collection $collection */
+            $this->_sellers = Mage::getModel('maxipago/seller')->getCollection();
+        }
+        return $this->_sellers;
     }
 
     public function canShowTab()
     {
-        if (Mage::getStoreConfig('payment/maxipago_settings/enabled_split')) {
+        if ($this->_getHelper()->getConfig('enabled_split')) {
             return true;
         } else {
             return false;
@@ -79,5 +95,18 @@ class MaxiPago_Payment_Block_Adminhtml_Catalog_Product_Tab_Seller
     public function isHidden()
     {
         return false;
+    }
+
+
+    /**
+     * @return MaxiPago_Payment_Helper_Data|Mage_Core_Helper_Abstract
+     */
+    protected function _getHelper()
+    {
+        if (!$this->_helper) {
+            $this->_helper = Mage::helper('maxipago');
+        }
+
+        return $this->_helper;
     }
 }

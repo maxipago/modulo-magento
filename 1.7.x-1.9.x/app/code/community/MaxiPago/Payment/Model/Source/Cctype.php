@@ -15,6 +15,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class MaxiPago_Payment_Model_Source_Cctype
@@ -30,6 +31,7 @@ class MaxiPago_Payment_Model_Source_Cctype
             array('value' => 'EL', 'label' => 'Elo'),
             array('value' => 'DI', 'label' => 'Discover'),
             array('value' => 'HC', 'label' => 'Hipercard'),
+            array('value' => 'HI', 'label' => 'Hiper'),
             array('value' => 'JC', 'label' => 'JCB'),
             array('value' => 'AU', 'label' => 'Aura'),
             array('value' => 'CR', 'label' => 'Credz')
@@ -54,17 +56,6 @@ class MaxiPago_Payment_Model_Source_Cctype
 
         switch ($ccType) {
             case 'VI':
-                $processors = array(
-                    array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
-                    array('value' => '2', 'label' => $helper->__('Redecard')),
-                    array('value' => '3', 'label' => $helper->__('GetNet')),
-                    array('value' => '4', 'label' => $helper->__('Cielo')),
-                    array('value' => '5', 'label' => $helper->__('e.Rede')),
-                    array('value' => '6', 'label' => $helper->__('Elavon')),
-                    array('value' => '9', 'label' => $helper->__('Stone')),
-                    array('value' => '10', 'label' => $helper->__('bin')),
-                );
-                break;
             case 'MC':
                 $processors = array(
                     array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
@@ -97,9 +88,9 @@ class MaxiPago_Payment_Model_Source_Cctype
             case 'EL':
                 $processors = array(
                     array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
+                    array('value' => '3', 'label' => $helper->__('GetNet')),
                     array('value' => '4', 'label' => $helper->__('Cielo')),
                     array('value' => '5', 'label' => $helper->__('e.Rede')),
-                    array('value' => '10', 'label' => $helper->__('bin')),
                 );
                 break;
             case 'DI':
@@ -112,6 +103,7 @@ class MaxiPago_Payment_Model_Source_Cctype
                 );
                 break;
             case 'HC':
+            case 'HI':
                 $processors = array(
                     array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
                     array('value' => '2', 'label' => $helper->__('Redecard')),
@@ -135,6 +127,7 @@ class MaxiPago_Payment_Model_Source_Cctype
             case 'CR':
                 $processors = array(
                     array('value' => '1', 'label' => $helper->__('Simulador de Teste')),
+                    array('value' => '5', 'label' => $helper->__('e.Rede')),
                 );
                 break;
             default:

@@ -15,6 +15,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class MaxiPago_Payment_Model_Source_Eft_Banks
@@ -22,6 +23,7 @@ class MaxiPago_Payment_Model_Source_Eft_Banks
 {
     public function toOptionArray()
     {
+        /** @var MaxiPago_Payment_Helper_Data $_helper */
         $_helper = Mage::helper('maxipago');
 
         return array(

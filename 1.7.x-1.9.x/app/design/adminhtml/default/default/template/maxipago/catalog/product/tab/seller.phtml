@@ -4,8 +4,9 @@
  * @var MaxiPago_Payment_Model_Resource_Seller_Collection $sellers
  */
 
+$product = $this->getProduct();
 $sellers = $this->getSellers();
-$sellersUrl = Mage::helper('adminhtml')->getUrl('maxipago_admin/adminhtml_sellers');
+$sellersUrl = Mage::helper('adminhtml')->getUrl('maxipago_admin/sellers/new');
 ?>
 
 <div class="fieldset fieldset-wide children-options">
@@ -20,18 +21,25 @@ $sellersUrl = Mage::helper('adminhtml')->getUrl('maxipago_admin/adminhtml_seller
                         <?php echo $this->__('Seller ID from maxiPago!'); ?>
                     </td>
                     <td class="value">
-                        <?php if ($sellers->count()): ?>
+                        <?php if ($this->hasSeller()): ?>
                             <select name="product[maxipago_seller]">
                                 <option value=""></option>
                                 <?php
                                 /** @var MaxiPago_Payment_Model_Seller $seller */
                                 foreach ($sellers as $seller): ?>
-                                    <option value="<?php echo $seller->getSellerId();?>"><?php echo $seller->getName(); ?></option>
+                                    <?php $selected = $product->getData('maxipago_seller') == $seller->getSellerId() ? 'selected' : null; ?>
+                                    <option value="<?php echo $seller->getSellerId();?>" <?php echo $selected; ?>>
+                                        <?php echo $seller->getName(); ?>
+                                    </option>
                                 <?php endforeach; ?>
+                            </select>
 
                             <div class="note">
-                                <p><strong><?php echo $this->__('Note:') ?></strong>
-                                    <?php echo $this->__('You need to get the Seller ID from the maxiPago!'); ?></p>
+                                <p>
+                                    <strong><?php echo $this->__('Note:') ?></strong>
+                                    <?php echo $this->__('The Seller registered in maxiPago!'); ?>
+                                </p>
+                                <p><?php echo $this->__('You can add a new seller <a href="%s">here</a>', $sellersUrl); ?>
                             </div>
                         <?php else: ?>
                             <p><?php echo $this->__('You need to register the sellers <a href="%s">here</a>', $sellersUrl); ?>

@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -91,6 +92,42 @@ class MaxiPago_Payment_Model_Observer extends Varien_Event_Observer
                 $order->addStatusHistoryComment($message, $status)->setIsCustomerNotified(true);
                 $order->save();
             }
+        }
+
+        return $this;
+    }
+
+    public function salesOrderPlaceAfter(Varien_Event_Observer $observer)
+    {
+        try {
+
+            $this->sendOrderToFraudAnalysis($observer);
+
+            /** @var $order Mage_Sales_Model_Order */
+            $order = $observer->getEvent()->getOrder();
+
+            /** @var array $items */
+            $items = $order->getAllItems();
+
+            /** @var Mage_Sales_Model_Order_Item $item */
+            foreach ($items as $item) {
+
+                $seller = $this->getOrderHelper()->getSellerByProductId($item->getProduct()->getId());
+                if ($seller) {
+                    $installments = $order->getPayment()->getAdditionalInformation('installments')
+                        ? $order->getPayment()->getAdditionalInformation('installments')
+                        : 1;
+                    $item->setData('maxipago_seller_id', $seller->getId());
+                    $item->setData('maxipago_seller_mdr', $seller->getData('seller_mdr'));
+                    $item->setData('maxipago_seller_installments', $installments);
+                    $item->save();
+                }
+
+            }
+
+
+        } catch(Exception $e) {
+            Mage::logException($e);
         }
 
         return $this;

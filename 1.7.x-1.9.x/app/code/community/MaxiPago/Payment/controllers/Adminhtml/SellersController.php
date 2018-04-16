@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -59,11 +60,11 @@ class MaxiPago_Payment_Adminhtml_SellersController
         $this->_title($this->__('MaxiPago'));
         $this->_title($this->__('Edit Seller'));
 
-        $id = $this->getRequest()->getParam('entity_id');
+        $id = $this->getRequest()->getParam('id');
         $model = Mage::getModel('maxipago/seller')->load($id);
 
         if ($model->getId()) {
-            Mage::register("sellers_data", $model);
+            Mage::register('seller_data', $model);
         }
 
         $this->loadLayout();
@@ -86,6 +87,7 @@ class MaxiPago_Payment_Adminhtml_SellersController
     {
         $data = $this->getRequest()->getPost();
         $entityId = $this->getRequest()->getParam('id');
+        $redirectBack = $this->getRequest()->getParam('back', false);
 
         try {
             /** @var MaxiPago_Payment_Model_Seller $seller */
@@ -94,25 +96,27 @@ class MaxiPago_Payment_Adminhtml_SellersController
             if($entityId != '') {
                 $seller->load($entityId);
             }
-            $seller->setData($data);
 
+            $seller->addData($data);
             $seller->save();
+
             Mage::getSingleton('adminhtml/session')
                 ->addSuccess($this->_getHelper()->__('Seller created sucessfully'));
 
-
-            return $this->_redirect('*/*/');
+            if ($redirectBack) {
+                return $this->_redirect('*/*/edit', array('id' => $entityId, '_current' => true));
+            }
 
         } catch(Exception $e) {
             Mage::getSingleton('adminhtml/session')
                 ->addError($this->_getHelper()->__('There were an error creating seller: '. $e->getMessage()));
-            return $this->_redirect('*/*/');
         }
+        return $this->_redirect('*/*/');
     }
 
     public function deleteAction()
     {
-        $id = $this->getRequest()->getParam('entity_id');
+        $id = $this->getRequest()->getParam('id');
         if (!$id) {
             Mage::getSingleton('adminhtml/session')->addError('Seller doesn\'t exist!');
             $this->_redirect('*/*/');
@@ -131,6 +135,42 @@ class MaxiPago_Payment_Adminhtml_SellersController
         }
 
         $this->_redirect('*/*/');
+    }
+
+    public function massDeleteAction()
+    {
+        $sellersIds = $this->getRequest()->getParam('sellers');
+
+        if (!is_array($sellersIds)) {
+            Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Selecione algum item'));
+        } else {
+
+            try {
+                foreach ($sellersIds as $sellersId) {
+                    /** @var MaxiPago_Payment_Model_Seller $model */
+                    $model = Mage::getModel('maxipago/seller')->load($sellersId);
+                    $model->delete();
+                }
+                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')
+                    ->__('Total de %d registro(s) removidos', count($sellersIds)));
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            }
+        }
+        $this->_redirect('*/*/index');
+
+    }
+
+    public function ordersAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    public function productsAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
     }
 
     /**

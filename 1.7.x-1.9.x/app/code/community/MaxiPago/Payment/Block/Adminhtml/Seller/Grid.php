@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -60,10 +61,10 @@ class MaxiPago_Payment_Block_Adminhtml_Seller_Grid
             'index' => 'name',
         ));
 
-        $this->addColumn('mdr', array(
+        $this->addColumn('seller_mdr', array(
             'header' => Mage::helper('maxipago')->__('MDR'),
             'align' => 'left',
-            'index' => 'mdr',
+            'index' => 'seller_mdr',
         ));
 
         $this->addColumn('days_to_pay', array(
@@ -107,7 +108,7 @@ class MaxiPago_Payment_Block_Adminhtml_Seller_Grid
     protected function _prepareMassaction()
     {
         $this->setMassactionIdField('entity_id');
-        $this->getMassactionBlock()->setFormFieldName('maxipago');
+        $this->getMassactionBlock()->setFormFieldName('sellers');
 
         $this->getMassactionBlock()->addItem('delete', array(
             'label' => Mage::helper('catalog')->__('Delete'),

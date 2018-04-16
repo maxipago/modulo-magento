@@ -15,6 +15,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
@@ -23,13 +24,17 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
 
     /**
      * @param Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order_Payment|Mage_Payment_Model_Info $payment
      * @return array
      */
-    public function getOrderData($order)
+    public function getOrderData($order, $payment)
     {
         $orderData = array();
 
         $items = $order->getAllVisibleItems();
+
+        $ccInstallments = $payment->getAdditionalInformation('installments');
+        $installments = ($ccInstallments) ? $ccInstallments : 1;
 
         $countItems = count($items);
         if ($countItems > 0) {
@@ -46,6 +51,26 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
                 $orderData['itemQuantity' . $i] = $qty;
                 $orderData['itemUnitCost' . $i] = $price;
                 $orderData['itemTotalAmount' . $i] = number_format($qty * $price, 2, '.', '');
+
+                if ($this->_getHelper()->getConfig('enabled_split')) {
+
+                    $seller = $this->getSellerByProductId($item->getProduct()->getId());
+
+                    if ($seller) {
+
+                        $sellerInstallments = $installments;
+                        if ($seller->getData('installments')) {
+                            $sellerInstallments = $seller->getData('installments');
+                        }
+
+                        $orderData['sellerId' . $i] = $seller->getData('seller_id');
+                        $orderData['sellerMDR' . $i] = $price * ((float)$seller->getData('seller_mdr') / 100);
+                        $orderData['sellerDaysToPay' . $i] = $seller->getData('days_to_pay');
+                        $orderData['sellerInstallments' . $i] = $sellerInstallments;
+
+                    }
+
+                }
 
                 $i++;
             }
@@ -191,24 +216,32 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
 
             $lastTransactionState = $order->getPayment()->getAdditionalInformation('last_transaction_state');
             if ($lastTransactionState != $state) {
-                if ($state == '10' || $state == '3' || $state == '36') {
+                if (
+                    $state == $helper->getTransactionState('paid')
+                    || $state == $helper->getTransactionState('captured')
+                    || $state == $helper->getTransactionState('boleto_overpaid')
+                ) {
 
                     $this->createInvoice($order, $transactionId);
-                    if ($state == '36') {
-                        $transactionStatus = $helper->getTransactionState($state);
+                    if ($state == $helper->getTransactionState('boleto_overpaid')) {
+                        $transactionStatus = $helper->getTransactionStateLabel($state);
                         $message = $helper->__('Order synchronized with status <strong>%s</strong>', $transactionStatus);
                     } else {
                         $message = $helper->__('Order approved, TID %s', $transactionId);
                     }
 
-                } else if ($state == '45' || $state == '7' || $state == '9') {
+                } else if (
+                    $state == $helper->getTransactionState('fraud_declined')
+                    || $state == $helper->getTransactionState('declined')
+                    || $state == $helper->getTransactionState('voided')
+                ) {
 
                     $this->cancelOrder($order, $transactionId);
                     $message = $helper->__('Order cancelled, TID %s', $transactionId);
 
                 } else {
 
-                    $transactionStatus = $helper->getTransactionState($state);
+                    $transactionStatus = $helper->getTransactionStateLabel($state);
                     $message = $helper->__('Order synchronized with status <strong>%s</strong>', $transactionStatus);
 
                 }
@@ -368,6 +401,23 @@ class MaxiPago_Payment_Helper_Order extends Mage_Core_Helper_Data
 
         $profile->setAdditionalInfo(serialize($additionalInfo));
 
+    }
+
+    public function getSellerByProductId($productId)
+    {
+        /** @var Mage_Catalog_Model_Product $product */
+        $product = Mage::getModel('catalog/product')->load($productId);
+
+        if ($product->getData('maxipago_seller')) {
+
+            /** @var MaxiPago_Payment_Model_Seller $seller */
+            $seller = Mage::getModel('maxipago/seller')->load($product->getData('maxipago_seller'), 'seller_id');
+
+            if ($seller && $seller->getId())
+                return $seller;
+        }
+
+        return false;
     }
 
     /**

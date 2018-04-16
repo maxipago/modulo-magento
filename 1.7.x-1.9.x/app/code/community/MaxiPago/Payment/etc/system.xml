@@ -15,6 +15,7 @@
  *
  * @category   maxiPago!
  * @package    MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
 -->
@@ -34,7 +35,7 @@
                         <div class="maxipago_main">
                             <div class="maxipago_description">
                                 <strong>
-                                    Módulo Magento maxiPago! versão 0.5.0 (Fev/2018)<br>
+                                    Módulo Magento maxiPago! versão 0.5.4 (Abr/2018)<br>
                                     Copyright © 2018 maxiPago! Todos os direitos reservados.
                                 </strong>
                             </div>
@@ -178,6 +179,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
+                            <comment><![CDATA[If your Magento show the payment info at success page DON'T enable this feature]]></comment>
                         </show_payment_info>
                         <enabled_split>
                             <label>Enable Split</label>
@@ -187,9 +189,22 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                            <comment><![CDATA[If a product is assigned to a seller, the credit card transaction would be splited among them<br> <strong>It'll work only for credit card transactions</strong>]]></comment>
+                            <comment><![CDATA[If a product is assigned to a seller, the transaction will be splited among them]]></comment>
                             <tooltip><![CDATA[To assign a product to a seller, you should enter into the product and assing it in the tab "MaxiPago Seller".]]></tooltip>
                         </enabled_split>
+                        <split_charge>
+                            <label>Split Charge Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>maxipago/source_split_charge</source_model>
+                            <sort_order>81</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[How split payment would charge the customer's bill, only a single charge or multiple charges (one per seller)]]></comment>
+                            <depends>
+                                <enabled_split>1</enabled_split>
+                            </depends>
+                        </split_charge>
                         <cron_time>
                             <label>Cron execution time</label>
                             <frontend_type>select</frontend_type>
@@ -291,11 +306,25 @@
                                     </depends>
                                 </fraud_processor>
 
+                                <clearsale_app translate="label">
+                                    <label>Clear Sale App</label>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>92</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                    <depends>
+                                        <cc_payment_action>auth</cc_payment_action>
+                                        <fraud_check>1</fraud_check>
+                                        <fraud_processor>98</fraud_processor>
+                                    </depends>
+                                </clearsale_app>
+
                                 <capture_on_low_risk translate="label">
                                     <label>Capture On Low Risk</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
-                                    <sort_order>92</sort_order>
+                                    <sort_order>93</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
@@ -310,7 +339,7 @@
                                     <label>Void On High Risk</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
-                                    <sort_order>93</sort_order>
+                                    <sort_order>94</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>

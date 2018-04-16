@@ -113,4 +113,30 @@
             <block type="maxipago/sales_order_total_interest" name="sales.order.total.interest" />
         </reference>
     </sales_email_order_creditmemo_items>
+
+    <!-- Checkouts most useds -->
+    <checkout_onepage_index>
+        <reference name="before_body_end">
+            <block type="core/template" name="maxipago.fraud.script" template="maxipago/fraud/script.phtml"/>
+        </reference>
+    </checkout_onepage_index>
+
+    <firecheckout_index_index>
+        <reference name="before_body_end">
+            <block type="core/template" name="maxipago.fraud.script" template="maxipago/fraud/script.phtml"/>
+        </reference>
+    </firecheckout_index_index>
+
+    <onestepcheckout_index_index>
+        <reference name="before_body_end">
+            <block type="core/template" name="maxipago.fraud.script" template="maxipago/fraud/script.phtml"/>
+        </reference>
+    </onestepcheckout_index_index>
+
+    <idecheckoutvm_index_index>
+        <reference name="before_body_end">
+            <block type="core/template" name="maxipago.fraud.script" template="maxipago/fraud/script.phtml"/>
+        </reference>
+    </idecheckoutvm_index_index>
+
 </layout>

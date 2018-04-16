@@ -15,6 +15,7 @@
  *
  * @category      maxiPago!
  * @package       MaxiPago_Payment
+ * @author        Thiago Contardi <thiago@contardi.com.br>
  *
  * @license       http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
@@ -82,13 +83,7 @@ abstract class MaxiPago_Payment_Model_Method_Abstract extends Mage_Payment_Model
      */
     protected function _getReservedOrderId()
     {
-        //Order Increment ID
-        $incrementOrderId = $this->_getHelper()->getSession()->getQuote()->getReservedOrderId();
-        if (!$incrementOrderId) {
-            $this->_getHelper()->getSession()->getQuote()->reserveOrderId();
-        }
-
-        return $this->_getHelper()->getSession()->getQuote()->getReservedOrderId();
+        return $this->_getHelper()->getReservedOrderId();
     }
 
     /**
