@@ -22,7 +22,7 @@
 <config>
     <modules>
         <MaxiPago_Payment>
-            <version>0.5.4</version>
+            <version>0.5.7</version>
         </MaxiPago_Payment>
     </modules>
 
@@ -344,14 +344,14 @@
 
     <crontab>
         <jobs>
-            <MaxiPago_Payment>
+            <maxipago_query_payments>
                 <schedule>
                     <config_path>payment/maxipago_settings/cron_time</config_path>
                 </schedule>
                 <run>
                     <model>maxipago/cron::queryPayments</model>
                 </run>
-            </MaxiPago_Payment>
+            </maxipago_query_payments>
         </jobs>
     </crontab>
 

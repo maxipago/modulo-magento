@@ -626,6 +626,7 @@ class maxiPago_XmlBuilder extends maxiPago_RequestBase
         if (($this->saveOnFile) && (!$this->token) && ($this->type != "recurringPayment")) {
             $this->setSaveOnFile();
         }
+        $this->setItens();
     }
 
     protected function setBoleto()
