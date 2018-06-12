@@ -66,7 +66,7 @@ class MaxiPago_Payment_Model_Cron
                 /** @var MaxiPago_Payment_Helper_Data $helper */
                 $helper = $this->_getHelper();
 
-                $response = $helper->getApi()->pullReport($order, false, self::CRON_FILE);
+                $response = $helper->getApi()->pullReport($order, true, self::CRON_FILE);
                 if (isset($response['records'])) {
                     $record = isset($response['records'][0]) ? $response['records'][0] : null;
                     if ($record) {

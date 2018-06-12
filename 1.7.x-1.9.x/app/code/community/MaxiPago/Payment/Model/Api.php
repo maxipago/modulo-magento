@@ -1199,8 +1199,10 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
                 $this->getMaxipago()->pullPaymentOrder($data);
             } else {
                 if ($transactionId) {
+                    $paymentTransaction = Mage::getModel('sales/order_payment_transaction')->load($payment->getId(), 'payment_id');
+
                     $data = array(
-                        "transactionID" => $payment->getAdditionalInformation('transaction_id'),
+                        "transactionID" => $paymentTransaction->getTxnId(),
                     );
                 } else {
                     $data = array(
