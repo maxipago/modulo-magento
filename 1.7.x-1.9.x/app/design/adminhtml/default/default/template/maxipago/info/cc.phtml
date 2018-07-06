@@ -57,7 +57,7 @@ $nsu = $info->getAdditionalInformation('processor_reference_number');
             <?php echo $textInterest;?>
         </p>
         <?php if ($totalWithInterest): ?>
-            <p><?php echo $this->__('Total with interest: %s', $coreHelper->currency($totalWithInterest)); ?></p>
+            <p><?php echo $this->__('Total: %s', $coreHelper->currency($totalWithInterest)); ?></p>
         <?php endif; ?>
     <?php endif;?>
 

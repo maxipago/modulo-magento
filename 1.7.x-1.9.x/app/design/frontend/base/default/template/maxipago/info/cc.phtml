@@ -54,8 +54,8 @@ $nsu = $info->getAdditionalInformation('processor_reference_number');
             <?php echo $this->__('de %s', number_format($installmentsValue, 2, ',', '.'));?>
             <?php echo $textInterest;?>
         </p>
-        <?php if ($totalWithInterest): ?>
-            <p><?php echo $this->__('Total with interest: %s', $coreHelper->currency($totalWithInterest)); ?></p>
+        <?php if ($totalWithInterest && $textInterest): ?>
+            <p><?php echo $this->__('Total: %s', $coreHelper->currency($totalWithInterest)); ?></p>
         <?php endif; ?>
     <?php endif;?>
 

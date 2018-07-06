@@ -35,7 +35,7 @@
                         <div class="maxipago_main">
                             <div class="maxipago_description">
                                 <strong>
-                                    Módulo Magento maxiPago! versão 0.5.7 (Mai/2018)<br>
+                                    Módulo Magento maxiPago! versão 0.5.8 (Mai/2018)<br>
                                     Copyright © 2018 maxiPago! Todos os direitos reservados.
                                 </strong>
                             </div>
@@ -715,7 +715,7 @@
                                 </sort_order>
                             </fields>
                         </maxipago_dc>
-                        
+
                         <maxipago_ticket  type="group">
                             <label>maxiPago! - Ticket</label>
                             <frontend_model>maxipago/adminhtml_system_config_form_fieldset</frontend_model>
@@ -1223,117 +1223,117 @@
                         </maxipago_checkout2>
 
                         <!--<maxipago_fraud type="group">-->
-                            <!--<label>maxiPago! - Fraud Analysis</label>-->
-                            <!--<frontend_model>maxipago/adminhtml_system_config_form_fieldset</frontend_model>-->
-                            <!--<sort_order>2500</sort_order>-->
-                            <!--<show_in_default>1</show_in_default>-->
-                            <!--<show_in_website>1</show_in_website>-->
-                            <!--<show_in_store>1</show_in_store>-->
-                            <!--<fields>-->
-                                <!--<enabled>-->
-                                    <!--<label>Enabled</label>-->
-                                    <!--<frontend_type>select</frontend_type>-->
-                                    <!--<source_model>adminhtml/system_config_source_yesno</source_model>-->
-                                    <!--<sort_order>10</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                <!--</enabled>-->
+                        <!--<label>maxiPago! - Fraud Analysis</label>-->
+                        <!--<frontend_model>maxipago/adminhtml_system_config_form_fieldset</frontend_model>-->
+                        <!--<sort_order>2500</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<fields>-->
+                        <!--<enabled>-->
+                        <!--<label>Enabled</label>-->
+                        <!--<frontend_type>select</frontend_type>-->
+                        <!--<source_model>adminhtml/system_config_source_yesno</source_model>-->
+                        <!--<sort_order>10</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--</enabled>-->
 
-                                <!--<fraud_processor translate="label">-->
-                                    <!--<label>Fraud Processor</label>-->
-                                    <!--<frontend_type>select</frontend_type>-->
-                                    <!--<source_model>maxipago/source_fraud_processorid</source_model>-->
-                                    <!--<sort_order>20</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</fraud_processor>-->
+                        <!--<fraud_processor translate="label">-->
+                        <!--<label>Fraud Processor</label>-->
+                        <!--<frontend_type>select</frontend_type>-->
+                        <!--<source_model>maxipago/source_fraud_processorid</source_model>-->
+                        <!--<sort_order>20</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</fraud_processor>-->
 
-                                <!--<minimum_amount translate="label comment">-->
-                                    <!--<label>Minimum Amount</label>-->
-                                    <!--<frontend_type>text</frontend_type>-->
-                                    <!--<sort_order>50</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>0</show_in_store>-->
-                                    <!--<comment>Minimum Amount that'll send the order to analysis at maxiPago! (Format: 9.99)</comment>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</minimum_amount>-->
+                        <!--<minimum_amount translate="label comment">-->
+                        <!--<label>Minimum Amount</label>-->
+                        <!--<frontend_type>text</frontend_type>-->
+                        <!--<sort_order>50</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>0</show_in_store>-->
+                        <!--<comment>Minimum Amount that'll send the order to analysis at maxiPago! (Format: 9.99)</comment>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</minimum_amount>-->
 
-                                <!--<payment_methods>-->
-                                    <!--<label>Payment Methods</label>-->
-                                    <!--<frontend_type>multiselect</frontend_type>-->
-                                    <!--<source_model>maxipago/source_methods_payment</source_model>-->
-                                    <!--<sort_order>60</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                    <!--<comment>MaxiPago will check only the selected payment methods.</comment>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</payment_methods>-->
+                        <!--<payment_methods>-->
+                        <!--<label>Payment Methods</label>-->
+                        <!--<frontend_type>multiselect</frontend_type>-->
+                        <!--<source_model>maxipago/source_methods_payment</source_model>-->
+                        <!--<sort_order>60</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<comment>MaxiPago will check only the selected payment methods.</comment>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</payment_methods>-->
 
-                                <!--<allowed_statuses>-->
-                                    <!--<label>Order Statuses</label>-->
-                                    <!--<frontend_type>multiselect</frontend_type>-->
-                                    <!--<source_model>adminhtml/system_config_source_order_status</source_model>-->
-                                    <!--<sort_order>70</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                    <!--<comment>MaxiPago will check only the selected order statuses.</comment>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</allowed_statuses>-->
+                        <!--<allowed_statuses>-->
+                        <!--<label>Order Statuses</label>-->
+                        <!--<frontend_type>multiselect</frontend_type>-->
+                        <!--<source_model>adminhtml/system_config_source_order_status</source_model>-->
+                        <!--<sort_order>70</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<comment>MaxiPago will check only the selected order statuses.</comment>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</allowed_statuses>-->
 
-                                <!--<cancel_reproved translate="label">-->
-                                    <!--<label>Automatically cancell when the reproved</label>-->
-                                    <!--<frontend_type>select</frontend_type>-->
-                                    <!--<source_model>adminhtml/system_config_source_yesno</source_model>-->
-                                    <!--<sort_order>90</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</cancel_reproved>-->
+                        <!--<cancel_reproved translate="label">-->
+                        <!--<label>Automatically cancell when the reproved</label>-->
+                        <!--<frontend_type>select</frontend_type>-->
+                        <!--<source_model>adminhtml/system_config_source_yesno</source_model>-->
+                        <!--<sort_order>90</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</cancel_reproved>-->
 
-                                <!--<invoice_approved translate="label">-->
-                                    <!--<label>Create Invoice automatically when approved</label>-->
-                                    <!--<frontend_type>select</frontend_type>-->
-                                    <!--<source_model>adminhtml/system_config_source_yesno</source_model>-->
-                                    <!--<sort_order>100</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</invoice_approved>-->
+                        <!--<invoice_approved translate="label">-->
+                        <!--<label>Create Invoice automatically when approved</label>-->
+                        <!--<frontend_type>select</frontend_type>-->
+                        <!--<source_model>adminhtml/system_config_source_yesno</source_model>-->
+                        <!--<sort_order>100</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</invoice_approved>-->
 
-                                <!--<status_approved translate="label">-->
-                                    <!--<label>Status to approved orders</label>-->
-                                    <!--<frontend_type>select</frontend_type>-->
-                                    <!--<source_model>adminhtml/system_config_source_order_status</source_model>-->
-                                    <!--<sort_order>110</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>1</show_in_store>-->
-                                    <!--<depends>-->
-                                        <!--<enabled>1</enabled>-->
-                                    <!--</depends>-->
-                                <!--</status_approved>-->
+                        <!--<status_approved translate="label">-->
+                        <!--<label>Status to approved orders</label>-->
+                        <!--<frontend_type>select</frontend_type>-->
+                        <!--<source_model>adminhtml/system_config_source_order_status</source_model>-->
+                        <!--<sort_order>110</sort_order>-->
+                        <!--<show_in_default>1</show_in_default>-->
+                        <!--<show_in_website>1</show_in_website>-->
+                        <!--<show_in_store>1</show_in_store>-->
+                        <!--<depends>-->
+                        <!--<enabled>1</enabled>-->
+                        <!--</depends>-->
+                        <!--</status_approved>-->
 
-                            <!--</fields>-->
+                        <!--</fields>-->
                         <!--</maxipago_fraud>-->
                     </fields>
                 </maxipago_settings>

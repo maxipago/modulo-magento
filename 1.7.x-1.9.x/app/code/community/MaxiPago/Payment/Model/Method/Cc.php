@@ -166,6 +166,7 @@ class MaxiPago_Payment_Model_Method_Cc
 
         } catch (Exception $e) {
             Mage::getSingleton('checkout/session')->getQuote()->setReservedOrderId(null);
+            Mage::logException($e);
             $this->_getHelper()->log($e->getMessage());
             $exception = $errors ?: Mage::helper('payment')->__('There was an error processing your request. Please contact us or try again later.');
             Mage::throwException($exception);

@@ -990,7 +990,6 @@ class maxiPago_XmlBuilder extends maxiPago_RequestBase
         //}
 
         $this->setPayment();
-        $this->setItens();
     }
 
     protected function setRapiRequest() {

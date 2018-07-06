@@ -94,7 +94,7 @@ class MaxiPago_Payment_Helper_Customer extends Mage_Core_Helper_Data
         $data[$type . 'DocumentType'] = $documentType;
         $data[$type . 'DocumentValue'] = $documentNumber;
 
-        if ($type == 'shipping') {
+        if ($type == 'billing') {
             /** @var Mage_Sales_Model_Order_Address|Mage_Sales_Model_Quote_Address $address */
             $address = $order->getBillingAddress();
         } else {
