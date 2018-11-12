@@ -219,10 +219,11 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
                     $data['voidOnHighRisk'] = $voidOnHighRisk;
                     if ($fraudProcessorId == '98') {
                         $data['fraudToken'] = $this->_getHelper()->getFraudToken('clearsale');
+                        $data['websiteId'] = 'Site';
                     } else if ($fraudProcessorId == '99') {
                         $data['fraudToken'] = $this->_getHelper()->getFraudToken('kount');
+                        $data['websiteId'] = 'DEFAULT';
                     }
-                    $data['websiteId'] = 'DEFAULT';
                 }
 
             }
