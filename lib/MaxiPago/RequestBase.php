@@ -174,7 +174,6 @@ class maxiPago_RequestBase
                     $this->setAuthOrSale();
                     if ($this->fraudCheck == "Y") {
                         $this->setFraudDetails();
-                        $this->setItens();
                     }
                     break;
                 case "capture":

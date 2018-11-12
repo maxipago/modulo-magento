@@ -153,6 +153,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
 
             $token = $payment->getAdditionalInformation('cc_token');
             $amount = number_format($amount, 2, '.', '');
+            $shippingAmount = number_format($order->getShippingAmount(), 2, '.', '');
 
             $ccBrand = $payment->getCcType();
             $processorID = $this->_getHelper()->getProcessor($ccBrand);
@@ -170,6 +171,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
                     'fraudCheck' => $fraudCheck,
                     'currencyCode' => $currencyCode,
                     'chargeTotal' => $amount,
+                    'shippingTotal' => $shippingAmount,
                     'numberOfInstallments' => $ccInstallments,
                     'chargeInterest' => $hasInterest,
                     'softDescriptor' => $softDescriptor
@@ -193,6 +195,7 @@ class MaxiPago_Payment_Model_Api extends Mage_Core_Model_Abstract
                     'cvvNumber' => $ccCid,
                     'currencyCode' => $currencyCode,
                     'chargeTotal' => $amount,
+                    'shippingTotal' => $shippingAmount,
                     'numberOfInstallments' => $ccInstallments,
                     'chargeInterest' => $hasInterest,
                     'softDescriptor' => $softDescriptor
